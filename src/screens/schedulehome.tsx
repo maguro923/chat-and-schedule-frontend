@@ -16,11 +16,11 @@ export default function ScheduleHome() {
     const userdata = useSelector((state: RootState) => state.userdata);
     const deviceid = useSelector((state: RootState) => state.deviceid);
 
-    useEffect(() => {
+    /*useEffect(() => {
         (async() => {
             await dispatch(getUserDataAsync());
         })()
-    },[]);
+    },[]);*/
 
     async function logout() {
         console.log("logout",value);

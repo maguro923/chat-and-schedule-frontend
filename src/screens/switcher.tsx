@@ -9,8 +9,9 @@ import Login from './login';
 import * as SecureStore from 'expo-secure-store';
 import { useBooleanContext, BooleanProvider } from '../context/LoginStatusContext';
 import { refresh, RefreshJsonInterface } from '../api/api';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { getUserDataAsync, setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,25 +21,64 @@ function HomeScreen() {
   const db = useSQLiteContext();
   const { value, setValue } = useBooleanContext();
 
+  const dispatch: AppDispatch = useDispatch();
+  const device_id = useSelector((state: RootState) => state.deviceid);
+  const userdata = useSelector((state: RootState) => state.userdata);
+
   useEffect(() => {
     setValue(true);
     /*console.log("useEffect",value)
     db.withTransactionAsync(async () => {
       await getData();
     })*/
-
-    //ログイン後にリフレッシュトークンを用いてアクセストークンを再発行
     const TokenRefresh = async () => {
-      const device_id = useSelector((state: RootState) => state.deviceid);
-      const token = useSelector((state: RootState) => state.userdata);
-      const sendJson: RefreshJsonInterface = {
-        refresh_token: token.userdata.refresh_token,
-        device_id: device_id.deviceid
-      };
-      const [status,res] = await refresh(sendJson);
-      //レスポンスに対する処理
-      console.log("status:",status);
-      console.log("res:",res);
+      await dispatch(getUserDataAsync())
+      .then(async() => {
+        const sendJson: RefreshJsonInterface = {
+          refresh_token: userdata.userdata.refresh_token,
+          device_id: device_id.deviceid
+        };
+        console.log("sendJson:",sendJson);
+        console.log(userdata.userdata)
+        const [status,res] = await refresh(sendJson);
+        const new_userdata: setUserDataInterface = {
+          name: userdata.userdata.name,
+          access_token: res.access_token,
+          access_token_expires: res.access_token_expires,
+          refresh_token: userdata.userdata.refresh_token,
+          refresh_token_expires: userdata.userdata.refresh_token_expires
+        };
+        //レスポンスに対する処理
+        if(status === 200){
+          console.log("アクセストークンの再発行に成功しました");
+          await dispatch(setUserDataAsync(new_userdata))
+          .then(() => {
+            console.log("アクセストークンを保存しました")
+          });
+        }else if(status === 400){
+          console.log("リクエストの形式が異なるようです",res.detail)
+          console.log("fafdafdsa",userdata.userdata);
+
+          setValue(false);
+        }else if(status === 401){
+          console.log("アクセストークンの再発行に失敗しました",status,res.detail);
+          setValue(false);
+        }else if(status === 403){
+          if (res.detail === "Token has expired") {
+            console.log("アクセストークンの有効期限が切れています",res.detail);
+            setValue(false);
+          }else if (res.detail === "Invalid device_id") {
+            console.log("あなたのデバイスは登録されていません",res.detail);
+            setValue(false);
+          }else{
+            console.log("アクセストークンの再発行に失敗しました",status,res.detail);
+            setValue(false);
+          }
+        }else{
+          console.log("アクセストークンの再発行に失敗しました",status,res.detail);
+          setValue(false);
+        }
+      });
     }
     TokenRefresh();
   },[]);
@@ -68,6 +108,7 @@ export default function Switcher () {
     const raw_token = SecureStore.getItem("refresh_token");
     const raw_token_expires = SecureStore.getItem("refresh_token_expires");
     if(raw_token === undefined || raw_token_expires === undefined){
+      //リフレッシュトークンがない
       return false;
     }
     const token: string = raw_token as string;
@@ -80,9 +121,8 @@ export default function Switcher () {
     console.log("リフレッシュトークンは有効期限内です",token_expires);
     return true;
   }
-  if(CheckUser() || value) {
+  if(CheckUser() && value) {
     return <HomeScreen />;
-  }else{      
-    return <Login />;
-  }
+  }   
+  return <Login />;
 }

@@ -105,10 +105,11 @@ export async function deluser(userdata: DeleteUserInterface) {
 export async function refresh(userdata: RefreshJsonInterface) {
     const [status,res] = await axios.post(
         `${URL}/auth/refresh`,
+        {},
         {headers: {
             'Content-Type': 'application/json',
-            "Refresh-Token": userdata.refresh_token,
-            "Device-Id": userdata.device_id
+            'refresh-token': userdata.refresh_token,
+            'device-id': userdata.device_id
         }}
     )
         .then(res => {

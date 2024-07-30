@@ -161,9 +161,11 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
                     refresh_token: res["refresh_token"],
                     refresh_token_expires: res["refresh_token_expires"]
                 };
-                dispatch(setUserDataAsync(res_data));
-                //console.log("dispatch end:",userdata.userdata);
-                setValue(true);
+                await dispatch(setUserDataAsync(res_data))
+                .then(() => {
+                  console.log("dispatch end:");
+                  setValue(true);
+                });
             }else if(status === 400){
                 for (const e of res["detail"]) {
                     console.log(e);
@@ -291,9 +293,11 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
                       refresh_token: res["refresh_token"],
                       refresh_token_expires: res["refresh_token_expires"]
                   };
-                  dispatch(setUserDataAsync(res_data))
-                  //console.log("dispatch end:",userdata.userdata);
-                  setValue(true);
+                  await dispatch(setUserDataAsync(res_data))
+                  .then(() => {
+                      console.log("dispatch end:");
+                      setValue(true);
+                  });
               }else if(status === 401){
                   username_input.current?.shake();
                   setUsername_error("ユーザーが存在しません");

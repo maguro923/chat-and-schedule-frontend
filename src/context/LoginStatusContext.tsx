@@ -43,7 +43,7 @@ const BooleanContext = createContext<BooleanContextInterface | undefined>(undefi
 
 // Contextのプロバイダーコンポーネント
 export const BooleanProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
-  const [value, setValue] = useState<boolean>(false);
+  const [value, setValue] = useState<boolean>(true);
 
   return (
     <BooleanContext.Provider value={{ value, setValue }}>
