@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ScheduleHome from './../screens/schedulehome';
@@ -25,22 +25,17 @@ function HomeScreen() {
   const device_id = useSelector((state: RootState) => state.deviceid);
   const userdata = useSelector((state: RootState) => state.userdata);
 
+  const isCallRefresh = useRef(false);
+
   useEffect(() => {
-    setValue(true);
-    /*console.log("useEffect",value)
-    db.withTransactionAsync(async () => {
-      await getData();
-    })*/
     const TokenRefresh = async () => {
-      await dispatch(getUserDataAsync())
-      .then(async() => {
-        const sendJson: RefreshJsonInterface = {
-          refresh_token: userdata.userdata.refresh_token,
-          device_id: device_id.deviceid
-        };
-        console.log("sendJson:",sendJson);
-        console.log(userdata.userdata)
-        const [status,res] = await refresh(sendJson);
+      console.log("second");
+      const sendJson: RefreshJsonInterface = {
+        refresh_token: userdata.userdata.refresh_token,
+        device_id: device_id.deviceid
+      };
+      console.log("sendJson:",sendJson);
+      const [status,res] = await refresh(sendJson);
         const new_userdata: setUserDataInterface = {
           name: userdata.userdata.name,
           access_token: res.access_token,
@@ -78,10 +73,30 @@ function HomeScreen() {
           console.log("アクセストークンの再発行に失敗しました",status,res.detail);
           setValue(false);
         }
-      });
+    }
+    if (isCallRefresh.current){
+      TokenRefresh();
+    }else{
+      console.log("isCallRefresh is false");
+    }
+  },[userdata]);
+
+  useEffect(() => {
+    /*console.log("useEffect",value)
+    db.withTransactionAsync(async () => {
+      await getData();
+    })*/
+    const TokenRefresh = async () => {
+      isCallRefresh.current = true;
+      console.log("first");
+      setValue(true);
+      await dispatch(getUserDataAsync());
+      console.log("first finish");
+      isCallRefresh.current = false;
     }
     TokenRefresh();
   },[]);
+
   async function getData(){
       const result = await db.getAllAsync(
         "select name from sqlite_master where type='table';"

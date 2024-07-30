@@ -163,7 +163,8 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
                 };
                 await dispatch(setUserDataAsync(res_data))
                 .then(() => {
-                  console.log("dispatch end:");
+                  console.log("Register setUserDataAsync was end");
+                  setValue(false);
                   setValue(true);
                 });
             }else if(status === 400){
@@ -295,7 +296,8 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
                   };
                   await dispatch(setUserDataAsync(res_data))
                   .then(() => {
-                      console.log("dispatch end:");
+                      console.log("Login setUserDataAsync was end");
+                      setValue(false);
                       setValue(true);
                   });
               }else if(status === 401){

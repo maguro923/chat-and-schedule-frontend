@@ -41,7 +41,6 @@ export const setUserDataAsync = createAsyncThunk(
 export const getUserDataAsync = createAsyncThunk(
     'userdata/getUserDataAsync',
     async (_, { dispatch }) => {
-        //console.log("getUserDataAsync");
         const name = await SecureStore.getItemAsync("username");
         const access_token = await SecureStore.getItemAsync("access_token");
         const access_token_expires = await SecureStore.getItemAsync("access_token_expires");
@@ -55,7 +54,6 @@ export const getUserDataAsync = createAsyncThunk(
             refresh_token: refresh_token || "",
             refresh_token_expires: refresh_token_expires || ""
         };
-
         dispatch(setUserData(userData));
         return;
     }
