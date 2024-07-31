@@ -1,15 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import badgeReducer from "./badgeSlice";
-import loginfffffReducer from "./loginStatusSlice";//適当でもいい
 import userDataSlice from "./userDataSlice";
 import deviceidSlice from "./deviceidSlice";
+import authErrorSlice from "./authErrorSlice";
 
 export const store = configureStore({
   reducer: {
     badge: badgeReducer,
-    statusnames: loginfffffReducer,
     userdata: userDataSlice,
-    deviceid: deviceidSlice
+    deviceid: deviceidSlice,
+    auth_error: authErrorSlice
   },
 });
 

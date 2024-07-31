@@ -8,6 +8,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { NativeStackScreenProps } from "react-native-screens/lib/typescript/native-stack/types";
 import { setUserDataAsync, setUserDataInterface } from "../redux/userDataSlice";
+import { setErrorMessage } from "../redux/authErrorSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import * as EmailValidator from 'email-validator';
@@ -211,7 +212,6 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
 function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [error_message, setError_message] = useState("");
     const [username_error, setUsername_error] = useState("");
     const [password_error, setPassword_error] = useState("");
     const [isPressed, setIsPressed] = useState(false);
@@ -219,27 +219,28 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
     const username_input = useRef<BaseInput & TextInput>(null);
     const password_input = useRef<BaseInput & TextInput>(null);
 
-    const changeUsername = (text: string) => {
-        setUsername(text);
-        setError_message("");
-        setUsername_error("");
-    };
-    const changePassword = (text: string) => {
-        setPassword(text);
-        setError_message("");
-        setPassword_error("");
-    }
-
     const { setValue } = useBooleanContext();
     const dispatch: AppDispatch = useDispatch();
     //const userdata = useSelector((state: RootState) => state.userdata);
     const deviceid = useSelector((state: RootState) => state.deviceid);
+    const auth_error = useSelector((state: RootState) => state.auth_error);
 
     const sendJson: LoginJsonInterface = {
         username: username,
         password: password,
         deviceid: deviceid.deviceid,
     };
+
+    const changeUsername = (text: string) => {
+        setUsername(text);
+        dispatch(setErrorMessage(""));
+        setUsername_error("");
+    };
+    const changePassword = (text: string) => {
+        setPassword(text);
+        dispatch(setErrorMessage(""));
+        setPassword_error("");
+    }
 
     /*useEffect(() => {
       console.log("LoginScreen useEffect:",userdata.userdata);
@@ -311,13 +312,13 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
                   console.log("パスワードが正しくありません",res["detail"]);
                   setIsPressed(false);
               }else{
-                  setError_message("不明なエラーが発生しました");
+                  dispatch(setErrorMessage("不明なエラーが発生しました"));
                   console.log("不明なエラーが発生しました",status,res["detail"]);
                   setIsPressed(false);
               }
             }}
           />
-          <Text style={{alignSelf:"center",color:"red",margin:15,fontSize:20}}>{error_message}</Text>
+          <Text style={{alignSelf:"center",color:"red",margin:15,fontSize:20}}>{auth_error.error_message}</Text>
           <Button
             title="新しいアカウントを作成"
             type="outline"

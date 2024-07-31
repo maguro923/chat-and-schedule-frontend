@@ -12,6 +12,7 @@ import { refresh, RefreshJsonInterface } from '../api/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { getUserDataAsync, setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
+import { setErrorMessage } from '../redux/authErrorSlice';
 
 const Tab = createBottomTabNavigator();
 
@@ -50,17 +51,19 @@ function HomeScreen() {
           .then(() => {
             console.log("アクセストークンを保存しました")
           });
-        }else if(status === 400){
+        }else {
+          dispatch(setErrorMessage("不明なエラーが発生しました"))
+        }
+        if(status === 400){
           console.log("リクエストの形式が異なるようです",res.detail)
           console.log("fafdafdsa",userdata.userdata);
-
           setValue(false);
         }else if(status === 401){
           console.log("アクセストークンの再発行に失敗しました",status,res.detail);
           setValue(false);
         }else if(status === 403){
           if (res.detail === "Token has expired") {
-            console.log("アクセストークンの有効期限が切れています",res.detail);
+            console.log("リフレッシュトークンの有効期限が切れています",res.detail);
             setValue(false);
           }else if (res.detail === "Invalid device_id") {
             console.log("あなたのデバイスは登録されていません",res.detail);
@@ -69,7 +72,7 @@ function HomeScreen() {
             console.log("アクセストークンの再発行に失敗しました",status,res.detail);
             setValue(false);
           }
-        }else{
+        }else if(status !== 200){
           console.log("アクセストークンの再発行に失敗しました",status,res.detail);
           setValue(false);
         }
@@ -118,6 +121,7 @@ function HomeScreen() {
 
 export default function Switcher () {
   const { value, setValue } = useBooleanContext();
+  const dispatch: AppDispatch = useDispatch();
 
   const CheckUser = () => {
     const raw_token = SecureStore.getItem("refresh_token");
@@ -130,6 +134,7 @@ export default function Switcher () {
     const token_expires: string = raw_token_expires as string;
     // トークンの有効期限を確認
     if(token_expires <= new Date().toISOString()){
+      dispatch(setErrorMessage("セッションの有効期限が切れました\n再度ログインしてください"));
       console.log("トークンの有効期限が切れています 再度ログインしてください");
       return false;
     }
