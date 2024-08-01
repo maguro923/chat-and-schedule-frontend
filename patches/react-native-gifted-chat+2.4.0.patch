@@ -1,0 +1,143 @@
+diff --git a/node_modules/react-native-gifted-chat/lib/Avatar.js b/node_modules/react-native-gifted-chat/lib/Avatar.js
+index 70ce1d7..291a0c9 100644
+--- a/node_modules/react-native-gifted-chat/lib/Avatar.js
++++ b/node_modules/react-native-gifted-chat/lib/Avatar.js
+@@ -1,8 +1,9 @@
+ import PropTypes from 'prop-types';
+ import React from 'react';
+-import { StyleSheet, View, } from 'react-native';
++import { StyleSheet, View } from 'react-native';
+ import GiftedAvatar from './GiftedAvatar';
+ import { StylePropType, isSameUser, isSameDay } from './utils';
++
+ const styles = {
+     left: StyleSheet.create({
+         container: {
+@@ -33,63 +34,87 @@ const styles = {
+         },
+     }),
+ };
+-export function Avatar(props) {
+-    const { renderAvatarOnTop, showAvatarForEveryMessage, containerStyle, position, currentMessage, renderAvatar, previousMessage, nextMessage, imageStyle, } = props;
++
++export function Avatar({
++    renderAvatarOnTop = false,
++    showAvatarForEveryMessage = false,
++    containerStyle = {},
++    position = 'left',
++    currentMessage = { user: null },
++    previousMessage = {},
++    nextMessage = {},
++    renderAvatar = null,
++    imageStyle = {},
++    onPressAvatar = () => {},
++    onLongPressAvatar = () => {},
++}) {
+     const messageToCompare = renderAvatarOnTop ? previousMessage : nextMessage;
+     const computedStyle = renderAvatarOnTop ? 'onTop' : 'onBottom';
++
+     if (renderAvatar === null) {
+         return null;
+     }
++
+     if (!showAvatarForEveryMessage &&
+         currentMessage &&
+         messageToCompare &&
+         isSameUser(currentMessage, messageToCompare) &&
+         isSameDay(currentMessage, messageToCompare)) {
+-        return (<View style={[
++        return (
++            <View style={[
+                 styles[position].container,
+                 containerStyle && containerStyle[position],
+             ]}>
+-        <GiftedAvatar avatarStyle={[
+-                styles[position].image,
+-                imageStyle && imageStyle[position],
+-            ]}/>
+-      </View>);
++                <GiftedAvatar avatarStyle={[
++                    styles[position].image,
++                    imageStyle && imageStyle[position],
++                ]}/>
++            </View>
++        );
+     }
++
+     const renderAvatarComponent = () => {
+-        if (props.renderAvatar) {
+-            const { renderAvatar, ...avatarProps } = props;
+-            return props.renderAvatar(avatarProps);
++        if (renderAvatar) {
++            return renderAvatar({
++                renderAvatarOnTop,
++                showAvatarForEveryMessage,
++                containerStyle,
++                position,
++                currentMessage,
++                previousMessage,
++                nextMessage,
++                imageStyle,
++                onPressAvatar,
++                onLongPressAvatar
++            });
+         }
+-        if (props.currentMessage) {
+-            return (<GiftedAvatar avatarStyle={[
+-                    styles[props.position].image,
+-                    props.imageStyle && props.imageStyle[props.position],
+-                ]} user={props.currentMessage.user} onPress={() => { var _a; return (_a = props.onPressAvatar) === null || _a === void 0 ? void 0 : _a.call(props, props.currentMessage.user); }} onLongPress={() => { var _a; return (_a = props.onLongPressAvatar) === null || _a === void 0 ? void 0 : _a.call(props, props.currentMessage.user); }}/>);
++        if (currentMessage) {
++            return (
++                <GiftedAvatar
++                    avatarStyle={[
++                        styles[position].image,
++                        imageStyle && imageStyle[position],
++                    ]}
++                    user={currentMessage.user}
++                    onPress={() => onPressAvatar(currentMessage.user)}
++                    onLongPress={() => onLongPressAvatar(currentMessage.user)}
++                />
++            );
+         }
+         return null;
+     };
+-    return (<View style={[
++
++    return (
++        <View style={[
+             styles[position].container,
+             styles[position][computedStyle],
+             containerStyle && containerStyle[position],
+         ]}>
+-      {renderAvatarComponent()}
+-    </View>);
++            {renderAvatarComponent()}
++        </View>
++    );
+ }
+-Avatar.defaultProps = {
+-    renderAvatarOnTop: false,
+-    showAvatarForEveryMessage: false,
+-    position: 'left',
+-    currentMessage: {
+-        user: null,
+-    },
+-    previousMessage: {},
+-    nextMessage: {},
+-    containerStyle: {},
+-    imageStyle: {},
+-    onPressAvatar: () => { },
+-    onLongPressAvatar: () => { },
+-};
++
+ Avatar.propTypes = {
+     renderAvatarOnTop: PropTypes.bool,
+     showAvatarForEveryMessage: PropTypes.bool,
+@@ -109,4 +134,3 @@ Avatar.propTypes = {
+         right: StylePropType,
+     }),
+ };
+\ No newline at end of file
+-//# sourceMappingURL=Avatar.js.map
+\ No newline at end of file
