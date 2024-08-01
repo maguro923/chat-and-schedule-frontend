@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { getUserDataAsync, setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 import { setErrorMessage } from '../redux/authErrorSlice';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 const Tab = createBottomTabNavigator();
 
@@ -109,9 +110,12 @@ function HomeScreen() {
   return (
     <NavigationContainer independent={true}>
         <Tab.Navigator screenOptions={{headerShown: false}}>
-            <Tab.Screen name="スケジュール" component={ScheduleHome}/>
+            <Tab.Screen name="ホーム" component={ScheduleHome} options={{
+              tabBarIcon:({focused})=> <Icon name="home" size={24} color={focused?"#007AFF":"gray"}/>,
+            }}/>
             <Tab.Screen name="チャット" component={ChatHome} options={{
               tabBarBadge: flag ? count : undefined,
+              tabBarIcon:({focused})=> <Icon name="message1" size={24} color={focused?"#007AFF":"gray"}/>,
             }}/>
         </Tab.Navigator>
     </NavigationContainer>
