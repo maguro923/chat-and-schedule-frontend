@@ -32,7 +32,7 @@ export default function ScheduleHome() {
     }
 
     const testjson:DeleteUserInterface = {
-        name: userdata.userdata.name,
+        id: userdata.userdata.id,
         access_token: userdata.userdata.access_token,
         password: "Password1",
         deviceid: deviceid.deviceid

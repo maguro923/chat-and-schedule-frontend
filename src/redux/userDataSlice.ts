@@ -5,6 +5,7 @@ export  interface userDataInterface {
     //storreと名前を同じにする
     userdata:{
         name: string;
+        id: string;
         access_token: string;
         access_token_expires: string;
         refresh_token: string;
@@ -14,6 +15,7 @@ export  interface userDataInterface {
 
 export interface setUserDataInterface {
     name: string;
+    id: string;
     access_token: string;
     access_token_expires: string;
     refresh_token: string;
@@ -27,6 +29,7 @@ export const setUserDataAsync = createAsyncThunk(
         // SecureStoreにデータを保存
         //console.log("setUserDataAsync",userData);
         await SecureStore.setItemAsync("username", userData.name);
+        await SecureStore.setItemAsync("userid", userData.id);
         await SecureStore.setItemAsync("access_token", userData.access_token);
         await SecureStore.setItemAsync("access_token_expires", userData.access_token_expires);
         await SecureStore.setItemAsync("refresh_token", userData.refresh_token);
@@ -42,6 +45,7 @@ export const getUserDataAsync = createAsyncThunk(
     'userdata/getUserDataAsync',
     async (_, { dispatch }) => {
         const name = await SecureStore.getItemAsync("username");
+        const id = await SecureStore.getItemAsync("userid");
         const access_token = await SecureStore.getItemAsync("access_token");
         const access_token_expires = await SecureStore.getItemAsync("access_token_expires");
         const refresh_token = await SecureStore.getItemAsync("refresh_token");
@@ -49,6 +53,7 @@ export const getUserDataAsync = createAsyncThunk(
         
         const userData: setUserDataInterface = {
             name: name || "",
+            id: id || "",
             access_token: access_token || "",
             access_token_expires: access_token_expires || "",
             refresh_token: refresh_token || "",
@@ -64,6 +69,7 @@ export const userDataSlice = createSlice({
     initialState: {
         userdata: {
             name: "",
+            id: "",
             access_token: "",
             access_token_expires: "",
             refresh_token: "",

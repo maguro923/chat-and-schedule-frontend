@@ -157,6 +157,7 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
                 //console.log("dispatch start:",userdata.userdata);
                 const res_data: setUserDataInterface = {
                     name: username,
+                    id: res["user_id"],
                     access_token: res["access_token"],
                     access_token_expires: res["access_token_expires"],
                     refresh_token: res["refresh_token"],
@@ -175,11 +176,7 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
                 setError_message("入力内容に誤りがあります");
                 setIsPressed(false);
             }else if(status === 409){
-                if (res["detail"] === "User already exists") {
-                    username_input.current?.shake();
-                    setUsername_error("ユーザーが既に存在します");
-                    console.log("ユーザーが既に存在します");
-                }else if (res["detail"] === "Email already registered") {
+                if (res["detail"] === "Email already registered") {
                     mailAddress_input.current?.shake();
                     setMailAddress_error("メールアドレスが既に登録されています");
                     console.log("メールアドレスが既に登録されています");
@@ -210,7 +207,7 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
 }
 
 function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username_error, setUsername_error] = useState("");
     const [password_error, setPassword_error] = useState("");
@@ -226,13 +223,13 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
     const auth_error = useSelector((state: RootState) => state.auth_error);
 
     const sendJson: LoginJsonInterface = {
-        username: username,
+        email: email,
         password: password,
         deviceid: deviceid.deviceid,
     };
 
-    const changeUsername = (text: string) => {
-        setUsername(text);
+    const changeEmail = (text: string) => {
+        setEmail(text);
         dispatch(setErrorMessage(""));
         setUsername_error("");
     };
@@ -253,12 +250,12 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
           <Input
             ref={username_input}
             containerStyle={styles.textContainer}
-            placeholder="ユーザー名"
+            placeholder="メールアドレス"
             errorMessage={username_error}
             errorStyle={{fontSize:15}}
             inputContainerStyle={styles.textInputContainer}
-            value={username}
-            onChangeText={changeUsername}
+            value={email}
+            onChangeText={changeEmail}
             keyboardType="default"
             autoCapitalize="none"
             autoCorrect={false}
@@ -278,7 +275,7 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
           />
           <Button
             title="ログイン"
-            disabled={ isPressed || username==="" || password==="" ? true : false }
+            disabled={ isPressed || email==="" || password==="" ? true : false }
             containerStyle={styles.buttonContainer}
             buttonStyle={styles.button}
             onPress={async() => {
@@ -289,7 +286,8 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
                   //await saveToken(res,username);
                   //console.log("dispatch start:",userdata.userdata);
                   const res_data: setUserDataInterface = {
-                      name: username,
+                      name: res["user_name"],
+                      id: res["user_id"],
                       access_token: res["access_token"],
                       access_token_expires: res["access_token_expires"],
                       refresh_token: res["refresh_token"],
@@ -303,8 +301,8 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
                   });
               }else if(status === 401){
                   username_input.current?.shake();
-                  setUsername_error("ユーザーが存在しません");
-                  console.log("ユーザーが存在しません:",res["detail"]);
+                  setUsername_error("メールアドレスが登録されていません");
+                  console.log("メールアドレスが登録されていません:",res["detail"]);
                   setIsPressed(false);
               }else if(status === 403){
                   password_input.current?.shake();

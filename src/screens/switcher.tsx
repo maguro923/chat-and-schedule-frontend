@@ -40,6 +40,7 @@ function HomeScreen() {
       const [status,res] = await refresh(sendJson);
         const new_userdata: setUserDataInterface = {
           name: userdata.userdata.name,
+          id: userdata.userdata.id,
           access_token: res.access_token,
           access_token_expires: res.access_token_expires,
           refresh_token: userdata.userdata.refresh_token,

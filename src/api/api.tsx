@@ -2,7 +2,7 @@ import axios from 'axios';
 const URL: string = 'http://192.168.0.150:8000';
 
 export interface LoginJsonInterface {
-    username: string;
+    email: string;
     password: string;
     deviceid: string;
 }
@@ -15,7 +15,7 @@ export interface RegisterJsonInterface {
 }
 
 export interface DeleteUserInterface {
-    name: string;
+    id: string;
     password: string;
     access_token: string;
     deviceid: string;
@@ -80,7 +80,7 @@ export async function register(userdata: RegisterJsonInterface) {
 
 export async function deluser(userdata: DeleteUserInterface) {
     const [status,res] = await axios.delete(
-        `${URL}/users/${userdata.name}`,
+        `${URL}/users/${userdata.id}`,
         {headers: {
             'Content-Type': 'application/json',
             'Access-Token': userdata.access_token,
