@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { NavigationContainer } from "@react-navigation/native";
+import { getFocusedRouteNameFromRoute, NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ScheduleHome from './../screens/schedulehome';
 import ChatHome from './../screens/chathome';
@@ -33,12 +33,10 @@ function HomeScreen() {
 
   useEffect(() => {
     const TokenRefresh = async () => {
-      console.log("second");
       const sendJson: RefreshJsonInterface = {
         refresh_token: userdata.userdata.refresh_token,
         device_id: device_id.deviceid
       };
-      console.log("sendJson:",sendJson);
       const [status,res] = await refresh(sendJson);
         const new_userdata: setUserDataInterface = {
           name: userdata.userdata.name,
@@ -83,8 +81,6 @@ function HomeScreen() {
     }
     if (isCallRefresh.current){
       TokenRefresh();
-    }else{
-      console.log("isCallRefresh is false");
     }
   },[userdata]);
 
@@ -104,22 +100,24 @@ function HomeScreen() {
     TokenRefresh();
   },[]);
 
-  async function getData(){
-      const result = await db.getAllAsync(
-        "select name from sqlite_master where type='table';"
-      );
-      console.log("result is:",result);
+  function getTabBarVisibility(route: any) {
+    if (getFocusedRouteNameFromRoute(route) === "ChatScreen" ?? "") {
+      return false;
+    }
+    return true;
   }
+
   return (
-    <NavigationContainer independent={true}>
+    <NavigationContainer>
         <Tab.Navigator screenOptions={{headerShown: false}}>
             <Tab.Screen name="ホーム" component={ScheduleHome} options={{
               tabBarIcon:({focused})=> <Icon name="home" size={24} color={focused?"#007AFF":"gray"}/>,
             }}/>
-            <Tab.Screen name="チャット" component={ChatHome} options={{
+            <Tab.Screen name="チャット" component={ChatHome} options={({route}) => ({
               tabBarBadge: flag ? count : undefined,
-              tabBarIcon:({focused})=> <Icon name="message1" size={24} color={focused?"#007AFF":"gray"}/>,
-            }}/>
+              tabBarIcon:({focused})=> <Icon name="message1" size={24} color={focused?"#007AFF":"gray"} />,
+              tabBarStyle:{display: getTabBarVisibility(route)?"flex":"none"}
+            })}/>
         </Tab.Navigator>
     </NavigationContainer>
   );
