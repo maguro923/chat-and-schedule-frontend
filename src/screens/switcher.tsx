@@ -14,6 +14,8 @@ import { AppDispatch, RootState } from '../redux/store';
 import { getUserDataAsync, setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 import { setErrorMessage } from '../redux/authErrorSlice';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { sub } from 'date-fns';
+import { format } from 'date-fns-tz';
 
 const Tab = createBottomTabNavigator();
 
@@ -138,7 +140,7 @@ export default function Switcher () {
     const token: string = raw_token as string;
     const token_expires: string = raw_token_expires as string;
     // トークンの有効期限を確認
-    if(token_expires <= new Date().toISOString()){
+    if(token_expires <= format(sub(new Date(),{hours:9}), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})){
       dispatch(setErrorMessage("セッションの有効期限が切れました\n再度ログインしてください"));
       console.log("トークンの有効期限が切れています 再度ログインしてください");
       return false;
