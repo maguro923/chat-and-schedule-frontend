@@ -12,7 +12,7 @@ export interface deviceidInterface {
 function getDeviceID() {
     console.log("getting DeviceID...");
     const id = SecureStore.getItem('deviceid');
-    if (id === undefined){
+    if (id === undefined || id === null) {
         //デバイスIDが設定されてない＝初回起動時
         const generatedID = Device.osName+"$"+Device.brand+"$"+Device.modelName+"$"+Crypto.randomUUID();
         console.log("ようこそ\n",generatedID);
