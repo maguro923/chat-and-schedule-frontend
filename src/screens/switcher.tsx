@@ -58,7 +58,6 @@ function HomeScreen() {
         }
         if(status === 400){
           console.log("リクエストの形式が異なるようです",res.detail)
-          console.log("fafdafdsa",userdata.userdata);
           setValue(false);
         }else if(status === 401){
           console.log("アクセストークンの再発行に失敗しました",status,res.detail);
