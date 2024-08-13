@@ -12,6 +12,7 @@ import { setErrorMessage } from "../redux/authErrorSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import * as EmailValidator from 'email-validator';
+import * as SecureStore from 'expo-secure-store';
 
 type RootStackParamList = {
     Login: undefined;
@@ -95,6 +96,7 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
     username: username,
     password: password,
     deviceid: deviceid.deviceid,
+    fcmtoken: SecureStore.getItem('FCMToken') || "",
   };
 
   /*useEffect(() => {
@@ -226,6 +228,7 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
         email: email,
         password: password,
         deviceid: deviceid.deviceid,
+        fcmtoken: SecureStore.getItem('FCMToken') || "",
     };
 
     const changeEmail = (text: string) => {

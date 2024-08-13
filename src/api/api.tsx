@@ -5,6 +5,7 @@ export interface LoginJsonInterface {
     email: string;
     password: string;
     deviceid: string;
+    fcmtoken: string;
 }
 
 export interface RegisterJsonInterface {
@@ -12,6 +13,7 @@ export interface RegisterJsonInterface {
     email: string;
     password: string;
     deviceid: string;
+    fcmtoken: string;
 }
 
 export interface DeleteUserInterface {

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Application",
+    "name": "chat-and-schedule",
     "slug": "Application",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,13 +18,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      },
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "com.maguro39.chatandschedule",
+      "googleServicesFile": "./google-services.json"
     },
     "plugins": [
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b99efb6c-b707-4712-9799-39d6cc5899bb"
+      }
+    }
   }
 }

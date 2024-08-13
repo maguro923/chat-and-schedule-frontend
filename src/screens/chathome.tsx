@@ -6,9 +6,8 @@ import Chat from './chat';
 import { format } from 'date-fns-tz';
 import { sub } from 'date-fns';
 import * as Crypto from 'expo-crypto';
-import { Avatar } from 'react-native-elements';
+import { Avatar } from '@rneui/themed';
 import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
 import { NativeStackScreenProps } from 'react-native-screens/lib/typescript/native-stack/types';
 
 type RootStackParamList = {
@@ -40,7 +39,6 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
       new Date(b.latest_at).getTime() - new Date(a.latest_at).getTime()
     );
     setUserList(sortedList);
-    console.log("sorted");
   }, []);
   
   const addUser = (newUser: RoomListInterface) => {
@@ -83,7 +81,7 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
         <ListItem key={user["id"]} onPress={() => navigation.navigate(
           "ChatScreen",{roomid: user["id"], roomname: user["name"]}
           )}>
-          <Avatar rounded size={50} icon={{name:"person-outline", type:"material",size:39}} containerStyle={{backgroundColor:"gray"
+          <Avatar rounded size={50} source={{uri:"https://"}} containerStyle={{backgroundColor:"gray"
           }} />
           <ListItem.Content>
             <ListItem.Title style={{fontSize:24}}>{user["name"]}</ListItem.Title>

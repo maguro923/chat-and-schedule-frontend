@@ -38,3 +38,6 @@ src.zip
 
 .vscode/
 SQLiteDB.db
+%ProgramData%/
+
+google-services.json

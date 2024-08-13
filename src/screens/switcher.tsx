@@ -77,7 +77,7 @@ function HomeScreen() {
           console.log("アクセストークンの再発行に失敗しました",status,res.detail);
           setValue(false);
         }
-    }
+    };
     if (isCallRefresh.current){
       TokenRefresh();
     }
