@@ -58,7 +58,7 @@ export const userDataSlice = createSlice({
                         };
                     }
                     if (latestMessage.type === "text" || latestMessage.type === "system") {
-                        state.latest_message[roomId].content = latestMessage.content.replace(/\r?\n/g, '');
+                        state.latest_message[roomId].content = latestMessage.content.replace(/\r?\n/g, ' ');
                     }else{
                         state.latest_message[roomId].content = "画像を送信しました";
                     }
@@ -84,7 +84,7 @@ export const userDataSlice = createSlice({
                         if (state.latest_message[roomid].latest_at < latestMessage.created_at) {
                             state.latest_message[roomid].latest_at = latestMessage.created_at;
                             if (latestMessage.type === "text" || latestMessage.type === "system") {
-                                state.latest_message[roomid].content = latestMessage.content.replace(/\r?\n/g, '');
+                                state.latest_message[roomid].content = latestMessage.content.replace(/\r?\n/g, ' ');
                             }else if (latestMessage.type === "image") {
                                 state.latest_message[roomid].content = "画像を送信しました";
                             }
@@ -106,7 +106,7 @@ export const userDataSlice = createSlice({
                 };
             }
             if (action.payload.message.type === "text" || action.payload.message.type === "system") {
-                state.latest_message[action.payload.roomid].content = action.payload.message.content.replace(/\r?\n/g, '');
+                state.latest_message[action.payload.roomid].content = action.payload.message.content.replace(/\r?\n/g, ' ');
             }else if (action.payload.message.type === "image") {
                 state.latest_message[action.payload.roomid].content = "画像を送信しました";
             }
