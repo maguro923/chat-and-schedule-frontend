@@ -33,7 +33,7 @@ export function focusChatRoom(db:SQLiteDatabase, dispatch:AppDispatch, roomid:st
         };
         setMessages(message);
     }
-    const a = db.getAllSync("SELECT * FROM messages WHERE room_id = ? ORDER BY created_at DESC LIMIT 1000",roomid);
-    console.log('RESULT IS:',a);
+    //const a = db.getAllSync("SELECT * FROM messages WHERE room_id = ? ORDER BY created_at DESC LIMIT 1000",roomid);
+    //console.log('RESULT IS:',a);
     dispatch(focusMessages({roomid: roomid}));
 }

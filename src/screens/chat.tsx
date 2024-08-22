@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Actions, Avatar, GiftedChat, IMessage, Send } from 'react-native-gifted-chat';
+import { Actions, Avatar, GiftedChat, IMessage, Send, SystemMessage } from 'react-native-gifted-chat';
 import * as Crypto from 'expo-crypto';
 import * as Clipboard from 'expo-clipboard';
 import { RootStackScreenProps } from './chathome';
@@ -59,6 +59,21 @@ const CustomActions = (props: any) => {
   )
 }
 
+//システムメッセージをカスタム
+const CustomSystemMessage = (props: any) => {
+  return (
+    <SystemMessage
+      {...props}
+      containerStyle={{
+      }}
+      textStyle={{
+        color: "gray",
+        fontSize: 14,
+      }}
+    />
+  );
+};
+
 const handleLongPress = (context:any, message:any) => {
   const options = ['コピー', 'キャンセル'];
   const cancelButtonIndex = options.length - 1;
@@ -101,6 +116,16 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
             _id: msg.sender_id,
             name: userdata.id===msg.sender_id ? userdata.name : participants[msg.sender_id].name,
             avatar: userdata.id===msg.sender_id ? URL+userdata.avatar_path : URL+participants[msg.sender_id].avatar_path,
+          },
+        });
+      }else if (msg.type === "system") {
+        msg_list.push({
+          system: true,
+          _id: msg.id,
+          text: msg.content,
+          createdAt: parse(msg.created_at,'yyyy-MM-dd HH:mm:ss.SSSSSSXXX',new Date()),
+          user: {
+            _id: msg.sender_id,
           },
         });
       }
@@ -170,6 +195,8 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
         onLongPress={(context, message) => handleLongPress(context, message)}
         timeFormat='HH:mm'
         dateFormat='YYYY年MM月DD日'
+        //renderDay={(props) => <CustomRenderDay {...props} />}
+        renderSystemMessage={(props) => <CustomSystemMessage {...props} />}
       />
     </SafeAreaView>
   );
