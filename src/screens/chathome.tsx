@@ -6,7 +6,7 @@ import Chat from './chat';
 import { format } from 'date-fns-tz';
 import { set, sub } from 'date-fns';
 import * as Crypto from 'expo-crypto';
-import { Avatar } from '@rneui/themed';
+import { Avatar, Badge } from '@rneui/themed';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NativeStackScreenProps } from 'react-native-screens/lib/typescript/native-stack/types';
 import { useSelector } from 'react-redux';
@@ -36,6 +36,7 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
   const [roomList, setRoomList] = useState<RoomListInterface[]>([]);
   
   const rooms_info = useSelector((state: RootState) => state.roomsinfo.roomsInfo.rooms);
+  const messages = useSelector((state: RootState) => state.messageslist.new_messages);
   const latest_message = useSelector((state: RootState) => state.messageslist.latest_message);
   useEffect(() => {
     let RoomsList = [];
@@ -96,6 +97,10 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
             <ListItem.Title numberOfLines={1} style={{fontSize:24}}>{room["name"]}</ListItem.Title>
             <ListItem.Subtitle numberOfLines={1}>{room["message"]}</ListItem.Subtitle>
           </ListItem.Content>
+          {messages[room.id].length===0 ? <></>: <Badge value={messages[room.id].length}
+          textStyle={{fontSize: 14}}
+          badgeStyle={{width: 28, height: 28, borderRadius: 14}}
+          status="primary" />}
         </ListItem>
       ))}
       </ScrollView>
