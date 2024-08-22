@@ -4,11 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, ListItem } from '@rneui/base'
 import Chat from './chat';
 import { format } from 'date-fns-tz';
-import { sub } from 'date-fns';
+import { set, sub } from 'date-fns';
 import * as Crypto from 'expo-crypto';
 import { Avatar } from '@rneui/themed';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NativeStackScreenProps } from 'react-native-screens/lib/typescript/native-stack/types';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { URL } from '../api/config';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 type RootStackParamList = {
   ChatHomeScreen: undefined;
@@ -23,27 +27,36 @@ const Stack = createStackNavigator<RootStackParamList>();
 export interface RoomListInterface {
   id: string;
   name: string;
+  avatar_path: string;
   message: string;
   latest_at: string;
 }
 
 function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScreen'>) {
-  const exampleUserList: RoomListInterface[] = [
-    {id: Crypto.randomUUID(), name: "user1", message: "Hi,I'm a user1", latest_at: format(sub(new Date(),{hours:9}), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})},
-    {id: Crypto.randomUUID(), name: "user2", message: "Hi,I'm a user2", latest_at: format(sub(new Date(),{hours:9+435}), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})},
-    {id: Crypto.randomUUID(), name: "user3", message: "Hi,I'm a user3", latest_at: format(sub(new Date(),{hours:9+5}), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})}];
-  const [userList, setUserList] = useState<RoomListInterface[]>(exampleUserList);
-
+  const [roomList, setRoomList] = useState<RoomListInterface[]>([]);
+  
+  const rooms_info = useSelector((state: RootState) => state.roomsinfo.roomsInfo.rooms);
+  const latest_message = useSelector((state: RootState) => state.messageslist.latest_message);
   useEffect(() => {
-    const sortedList = [...userList].sort((a, b) =>
-      new Date(b.latest_at).getTime() - new Date(a.latest_at).getTime()
-    );
-    setUserList(sortedList);
-  }, []);
+    let RoomsList = [];
+    for (let room  of rooms_info) {
+      RoomsList.push({id: room.id, name: room.name, avatar_path: room.avatar_path,
+        message: latest_message[room.id].content==="" || latest_message[room.id].content===undefined ? "メッセージはありません": latest_message[room.id].content
+        , latest_at:latest_message[room.id].latest_at});
+    }
+    for (let RoomList of RoomsList) {
+      setRoomList((prevList)=>{
+        const updatedList = [RoomList];
+        return updatedList.sort((a, b) =>
+          new Date(b.latest_at).getTime() - new Date(a.latest_at).getTime()
+        );
+      });
+    }
+  }, [rooms_info, latest_message]);
   
   const addUser = (newUser: RoomListInterface) => {
-    setUserList((prevList) => {
-      const updatedList = [...prevList, newUser];
+    setRoomList((prevList) => {
+      const updatedList = [...prevList,newUser];
       return updatedList.sort((a, b) =>
         new Date(b.latest_at).getTime() - new Date(a.latest_at).getTime()
       );
@@ -51,11 +64,11 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
   };
   
   const removeUser = (id: string) => {
-    setUserList((prevList) => prevList.filter(user => user.id !== id));
+    setRoomList((prevList) => prevList.filter(user => user.id !== id));
   };
   
   const updateUser = (updatedUser: RoomListInterface) => {
-    setUserList((prevList) => {
+    setRoomList((prevList) => {
       const newList = prevList.map(user => user.id === updatedUser.id ? updatedUser : user);
       return newList.sort((a, b) =>
         new Date(b.latest_at).getTime() - new Date(a.latest_at).getTime()
@@ -73,19 +86,15 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-      <Button
-        title="Add User"
-        onPress={() => addUser({id: Crypto.randomUUID(), name: "user4", message: "Hi,I'm a user4", latest_at: format(sub(new Date(),{hours:9+10}), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})})}
-      />
-      {userList.map((user) => (
-        <ListItem key={user["id"]} onPress={() => navigation.navigate(
-          "ChatScreen",{roomid: user["id"], roomname: user["name"]}
+      {roomList.map((room) => (
+        <ListItem key={room["id"]} onPress={() => navigation.navigate(
+          "ChatScreen",{roomid: room["id"], roomname: room["name"]}
           )}>
-          <Avatar rounded size={50} source={{uri:"https://"}} containerStyle={{backgroundColor:"gray"
+          <Avatar rounded size={50} source={{uri:URL+room['avatar_path']}} containerStyle={{backgroundColor:"gray"
           }} />
           <ListItem.Content>
-            <ListItem.Title style={{fontSize:24}}>{user["name"]}</ListItem.Title>
-            <ListItem.Subtitle>{user["message"]}</ListItem.Subtitle>
+            <ListItem.Title numberOfLines={1} style={{fontSize:24}}>{room["name"]}</ListItem.Title>
+            <ListItem.Subtitle numberOfLines={1}>{room["message"]}</ListItem.Subtitle>
           </ListItem.Content>
         </ListItem>
       ))}

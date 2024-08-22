@@ -160,6 +160,7 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
                 const res_data: setUserDataInterface = {
                     name: username,
                     id: res["user_id"],
+                    avatar_path: res["avatar_path"],
                     access_token: res["access_token"],
                     access_token_expires: res["access_token_expires"],
                     refresh_token: res["refresh_token"],
@@ -291,6 +292,7 @@ function LoginScreen ({route, navigation}:RootStackScreenProps<"Login">) {
                   const res_data: setUserDataInterface = {
                       name: res["user_name"],
                       id: res["user_id"],
+                      avatar_path: res["avatar_path"],
                       access_token: res["access_token"],
                       access_token_expires: res["access_token_expires"],
                       refresh_token: res["refresh_token"],

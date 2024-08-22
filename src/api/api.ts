@@ -1,5 +1,5 @@
 import axios from 'axios';
-const URL: string = 'http://192.168.0.150:8000';
+import {URL} from './config';
 
 export interface LoginJsonInterface {
     email: string;
@@ -112,6 +112,30 @@ export async function refresh(userdata: RefreshJsonInterface) {
             'Content-Type': 'application/json',
             'refresh-token': userdata.refresh_token,
             'device-id': userdata.device_id
+        }}
+    )
+        .then(res => {
+            return [res.status,res.data];
+        })
+        .catch(error => {
+            if (error.response === undefined) {
+                console.error("Error:",error);
+                return [-1, {"detail": "AxiosError"}];
+            }else{
+                return [error.response.status, error.response.data];
+            }
+        });
+    return [status,res];
+}
+
+export async function get_usersinfo(access_token: string, user_id: string,participants: string[]) {
+    const [status,res] = await axios.get(
+        `${URL}/users`,
+        {headers: {
+            'Content-Type': 'application/json',
+            'access-token': access_token,
+            'user-id': user_id,
+            'participants-id': participants
         }}
     )
         .then(res => {

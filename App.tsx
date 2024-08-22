@@ -8,7 +8,7 @@ import store from './src/redux/store';
 import Switcher from './src/screens/switcher';
 import { BooleanProvider } from './src/context/LoginStatusContext';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { initializeDatabase } from './src/database/database';
+import { initializeDatabase } from './src/database/initialize';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import * as SecureStore from 'expo-secure-store';
@@ -41,7 +41,6 @@ function Fcmtoken(){
         }else{
           //通知用トークンの取得
           const { data:fcmToken } = await Notifications.getDevicePushTokenAsync();
-          console.log(fcmToken);
           // トークンの保存
           const token = await SecureStore.getItemAsync('FCMToken')
           .then(async(token) => {

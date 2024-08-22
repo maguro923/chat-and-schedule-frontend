@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Actions, Avatar, GiftedChat, IMessage, Send } from 'react-native-gifted-chat';
 import * as Crypto from 'expo-crypto';
 import * as Clipboard from 'expo-clipboard';
 import { RootStackScreenProps } from './chathome';
+import { URL } from '../api/config';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { format } from 'date-fns-tz';
+import { parse } from 'date-fns';
+import { MessageInterface, setSendMessage } from '../redux/messagesListSlice';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { focusChatRoom } from '../utils/focus';
+import { useSQLiteContext } from 'expo-sqlite';
+import { sendWebSocketMessage } from '../redux/webSocketSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 // カスタムアバター
 const CustomAvatar = (props: any) => {
@@ -70,39 +81,78 @@ const handleLongPress = (context:any, message:any) => {
 
 
 export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
+  const dispatch: AppDispatch = useDispatch();
+  const db = useSQLiteContext();
   const [messages, setMessages] = useState<IMessage[]>([]); // メッセージリスト
-  console.log(route.params)
-  // アシスタントメッセージの作成
-  const reply = (): IMessage => {
-    return {
-      _id: Crypto.randomUUID(),
-      text: "こんにちは！",
-      createdAt: new Date(),
-      user: {
-        _id: 2,
-        name: "Assistant",
-        avatar: "https://ui-avatars.com/api/?background=0dbc3f&color=FFF&name=A",
-      },
-    };
-  };
+
+  // メッセージリストの取得
+  const messagesList = useSelector((state: RootState) => state.messageslist);
+  const participants = useSelector((state: RootState) => state.participantsinfo.participants);
+  useEffect(() => {
+    const raw_msg_list = messagesList.messages[route.params.roomid]
+    const msg_list: IMessage[] = [];
+    for (const msg of raw_msg_list) {
+      if (msg.type === "text") {
+        msg_list.push({
+          _id: msg.id,
+          text: msg.content,
+          createdAt: parse(msg.created_at,'yyyy-MM-dd HH:mm:ss.SSSSSSXXX',new Date()),
+          user: {
+            _id: msg.sender_id,
+            name: userdata.id===msg.sender_id ? userdata.name : participants[msg.sender_id].name,
+            avatar: userdata.id===msg.sender_id ? URL+userdata.avatar_path : URL+participants[msg.sender_id].avatar_path,
+          },
+        });
+      }
+    }
+    setMessages(msg_list);
+  }, [messagesList]);
+
+  //チャット画面のフォーカス、アンフォーカス時の処理
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    if (isFocused) {
+      focusChatRoom(db ,dispatch, route.params.roomid, messagesList.new_messages);
+    }else{
+      console.log('ChatHomeScreen is not focused');
+    }
+  }, [isFocused]);
 
   // 送信ボタン押下時に呼ばれる
-  const onSend = (newMessages: IMessage[] = []) => {
+  const onSend = async(newMessages: IMessage[] = []) => {
     // ユーザーメッセージの追加
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    );
-
-    // アシスタントメッセージの追加 dev
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, [reply()])
-    );
+    newMessages[0].createdAt = parse(format(new Date(), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'}), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",new Date());
+    const message:MessageInterface = {
+      id: newMessages[0]._id as string,
+      sender_id: newMessages[0].user._id as string,
+      type: "text",
+      content: newMessages[0].text,
+      created_at: format(newMessages[0].createdAt, "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'}),
+    };
+    dispatch(setSendMessage({roomid: route.params.roomid, message: message}));
+    await db.runAsync(`INSERT INTO messages 
+            (id, room_id, sender_id, type, content, created_at) 
+            VALUES (?, ?, ?, ?, ?, ?)`, 
+          [message.id, route.params.roomid, message.sender_id, message.type, message.content, 
+            format(new Date(), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})]);
+    const result = await dispatch(sendWebSocketMessage({"type":"SendMessage","content":{
+      "roomid": route.params.roomid,
+      "type": "text",
+      "message": message.content
+    }}));
+    const response:any = unwrapResult(result);
+    if (response.content?.message === "Message sent"){
+      console.log("メッセージを送信しました");
+    }else{
+      console.error("メッセージの送信に失敗しました",response);
+    }
   };
 
   // 自分のユーザー情報
+  const userdata = useSelector((state: RootState) => state.userdata.userdata);
   const user = {
-    _id: 1,
-    name: "User",
+    _id: userdata.id,
+    name: userdata.name,
   };
 
   return (
@@ -118,7 +168,7 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
         renderActions={(props) => <CustomActions {...props} />}
         //renderMessageText={(props) => <CustomMessageText {...props} />}
         onLongPress={(context, message) => handleLongPress(context, message)}
-        
+        timeFormat='HH:mm'
       />
     </SafeAreaView>
   );
