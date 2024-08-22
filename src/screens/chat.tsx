@@ -169,6 +169,7 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
         //renderMessageText={(props) => <CustomMessageText {...props} />}
         onLongPress={(context, message) => handleLongPress(context, message)}
         timeFormat='HH:mm'
+        dateFormat='YYYY年MM月DD日'
       />
     </SafeAreaView>
   );
