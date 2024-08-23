@@ -1,6 +1,10 @@
 import * as Crypto from 'expo-crypto';
 import { setLatestMessages ,MessagesListInterface, MessageInterface } from '../redux/messagesListSlice';
 import { store } from '../redux/store';//循環インポートとなるが、storeを使うために必要なので無視
+import { refresh, RefreshJsonInterface } from './api';
+import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
+import { setErrorMessage } from '../redux/authErrorSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const url = 'ws://192.168.0.150:8000/ws/';
 
@@ -45,14 +49,47 @@ class WebSocketService {
         this.messageHandlers.set("ReceiveMessage", (message: any) => {
             console.log("ReceiveMessage:", message);
         });
-        this.messageHandlers.set("AuthInfo", (message: any) => {
-            console.log("AuthInfo:", message);
+        this.messageHandlers.set("AuthInfo", async(message: any) => {
+            const send_reauth = async(Res:any,Device_id:any) => {
+                const result = await this.sendRequest({
+                    "type": "ReAuth", "content": {
+                        "access_token": Res.access_token, "device_id": Device_id} });
+                const response = unwrapResult(result)
+                console.log("ReAuth:", response.content);
+            }
+            const userdata = store.getState().userdata.userdata;
+            const device_id = store.getState().deviceid.deviceid;
+
+            const sendJson: RefreshJsonInterface = {
+                refresh_token: userdata.refresh_token,
+                device_id: device_id
+              };
+              const [status,res] = await refresh(sendJson);
+              const new_userdata: setUserDataInterface = {
+                name: userdata.name,
+                id: userdata.id,
+                avatar_path: userdata.avatar_path,
+                access_token: res.access_token,
+                access_token_expires: res.access_token_expires,
+                refresh_token: userdata.refresh_token,
+                refresh_token_expires: userdata.refresh_token_expires
+              };
+              //レスポンスに対する処理
+              if(status === 200){
+                console.log("アクセストークンの再発行に成功しました");
+                store.dispatch(setUserDataAsync(new_userdata))
+                  .then(() => {
+                    send_reauth(res,device_id);
+                  });
+              }else {
+                console.error("アクセストークンの再発行に失敗しました");
+              }
         });
         this.messageHandlers.set("FriendRequest", (message: any) => {
             console.log("FriendRequest:", message);
         });
         this.messageHandlers.set("Error", (message: any) => {
-            console.log("Error:", message);
+            console.error("Error:", message);
         });
 
         this.replyHandlers.set("reply-SendMessage", (response: any) => {});
