@@ -47,8 +47,8 @@ class WebSocketService {
         this.messageHandlers.set("Latest-FriendRequest", (message: any) => {
             console.log("Latest-FriendRequest:", message);
         });
+        //受信したメッセージをstoreに保存
         this.messageHandlers.set("ReceiveMessage", (message: any) => {
-            //console.log("ReceiveMessage:", message);
             var receive_message: MessageInterface[] = [];
             if (message.content.type === "text") {
                 receive_message.push({
