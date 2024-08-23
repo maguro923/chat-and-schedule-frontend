@@ -93,9 +93,7 @@ class WebSocketService {
         });
 
         this.replyHandlers.set("reply-SendMessage", (response: any) => {});
-        this.replyHandlers.set("reply-ReAuth", (response: any) => {
-            console.log("reply-ReAuth:", response);
-        });
+        this.replyHandlers.set("reply-ReAuth", (response: any) => {});
         this.replyHandlers.set("reply-Friend", (response: any) => {
             console.log("reply-Friend:", response);
         });
