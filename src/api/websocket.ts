@@ -19,6 +19,7 @@ class WebSocketService {
     private replyHandlers: Map<string, ReplyHandler> = new Map();
     
     constructor() {
+        //受信した最新メッセージをstoreに保存
         this.messageHandlers.set("Latest-Message", async(message: any) => {
             const MsgList:any[] = message.content;
             var LatestMsg:MessagesListInterface = {}
@@ -49,6 +50,7 @@ class WebSocketService {
         this.messageHandlers.set("ReceiveMessage", (message: any) => {
             console.log("ReceiveMessage:", message);
         });
+        //アクセストークンの再発行及び再認証
         this.messageHandlers.set("AuthInfo", async(message: any) => {
             const send_reauth = async(Res:any,Device_id:any) => {
                 const result = await this.sendRequest({
@@ -123,6 +125,7 @@ class WebSocketService {
             const ws_url = new URL(url + user_id);
             this.socket = new WebSocket(ws_url.toString());
 
+            //初回接続時認証情報を送信
             this.socket.onopen = () => {
                 this.socket?.send(JSON.stringify({ "type": 'init', "content": headers }));
                 resolve();
