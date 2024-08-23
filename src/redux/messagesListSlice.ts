@@ -48,8 +48,8 @@ export const userDataSlice = createSlice({
                     }
 
                     // メッセージを追加
-                    state.messages[roomId] = [...state.messages[roomId], ...messagesForRoom];
-                    state.new_messages[roomId] = [...state.new_messages[roomId], ...messagesForRoom];
+                    state.messages[roomId] = [...messagesForRoom, ...state.messages[roomId]];
+                    state.new_messages[roomId] = [...messagesForRoom, ...state.new_messages[roomId]];
                     const latestMessage = messagesForRoom[0];
                     if (!(roomId in state.latest_message)) {
                         state.latest_message[roomId] = {
@@ -66,8 +66,41 @@ export const userDataSlice = createSlice({
                 }
             }
         },
-        //メッセージをローカルから取得時にセット
+
+        //フォーカス中のルームに来たメッセージを受信
         setMessages: (state, action: PayloadAction<MessagesListInterface>) => {
+            const newMessages = action.payload;
+
+            for (const roomId in newMessages) {
+                if (Object.prototype.hasOwnProperty.call(newMessages, roomId)) {
+                    const messagesForRoom = newMessages[roomId];
+
+                    // 既存のルームIDがある場合はメッセージを追加、ない場合は新規作成
+                    if (!state.messages[roomId]) {
+                        state.messages[roomId] = [];
+                    }
+
+                    // メッセージを追加
+                    state.messages[roomId] = [...messagesForRoom, ...state.messages[roomId]];
+                    const latestMessage = messagesForRoom[0];
+                    if (!(roomId in state.latest_message)) {
+                        state.latest_message[roomId] = {
+                            content: "",
+                            latest_at: ""
+                        };
+                    }
+                    if (latestMessage.type === "text" || latestMessage.type === "system") {
+                        state.latest_message[roomId].content = latestMessage.content.replace(/\r?\n/g, ' ');
+                    }else{
+                        state.latest_message[roomId].content = "画像を送信しました";
+                    }
+                    state.latest_message[roomId].latest_at = latestMessage.created_at;
+                }
+            }
+        },
+
+        //メッセージをローカルから取得時にセット
+        setLocalMessages: (state, action: PayloadAction<MessagesListInterface>) => {
             for (const roomid in action.payload) {
                 if (Object.prototype.hasOwnProperty.call(action.payload, roomid)) {
                     //state.messages[roomid] = [...state.messages[roomid],...action.payload[roomid]];
@@ -119,6 +152,6 @@ export const userDataSlice = createSlice({
     }
 })
 
-export const { setLatestMessages,setMessages,setSendMessage,focusMessages } = userDataSlice.actions;//アクションオブジェクトの取得
+export const { setLatestMessages,setMessages ,setLocalMessages,setSendMessage,focusMessages } = userDataSlice.actions;//アクションオブジェクトの取得
 
 export default userDataSlice.reducer;

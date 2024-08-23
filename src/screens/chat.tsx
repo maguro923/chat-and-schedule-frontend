@@ -16,6 +16,8 @@ import { focusChatRoom } from '../utils/focus';
 import { useSQLiteContext } from 'expo-sqlite';
 import { sendWebSocketMessage } from '../redux/webSocketSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { ScrollView } from 'react-native-gesture-handler';
+import { setFocusRoom } from '../redux/roomsInfoSlice';
 
 // カスタムアバター
 const CustomAvatar = (props: any) => {
@@ -137,8 +139,10 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
+      dispatch(setFocusRoom(route.params.roomid));
       focusChatRoom(db ,dispatch, route.params.roomid, messagesList.new_messages);
     }else{
+      dispatch(setFocusRoom(""));
       console.log('ChatHomeScreen is not focused');
     }
   }, [isFocused]);
@@ -205,6 +209,6 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff'
+      backgroundColor: '#fff',
     },
 });

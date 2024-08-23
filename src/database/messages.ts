@@ -1,5 +1,5 @@
 import { SQLiteDatabase } from "expo-sqlite";
-import { MessagesListInterface, setMessages, MessageInterface, setLatestMessages } from "../redux/messagesListSlice";
+import { MessagesListInterface, setLocalMessages, MessageInterface, setLatestMessages } from "../redux/messagesListSlice";
 import { AppDispatch } from "../redux/store";
 
 export const loadMessages = async(db:SQLiteDatabase,dispatch:AppDispatch ,roomidlist:string[],messages:MessagesListInterface) => {
@@ -25,5 +25,5 @@ export const loadMessages = async(db:SQLiteDatabase,dispatch:AppDispatch ,roomid
         messageslist[roomid] = room_msg;
     }
     //メッセージをリストに追加
-    dispatch(setMessages(messageslist))
+    dispatch(setLocalMessages(messageslist))
 }

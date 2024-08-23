@@ -1,5 +1,5 @@
 import * as Crypto from 'expo-crypto';
-import { setLatestMessages ,MessagesListInterface, MessageInterface } from '../redux/messagesListSlice';
+import { setLatestMessages ,MessagesListInterface, MessageInterface, setMessages } from '../redux/messagesListSlice';
 import { store } from '../redux/store';//循環インポートとなるが、storeを使うために必要なので無視
 import { refresh, RefreshJsonInterface } from './api';
 import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
@@ -48,7 +48,35 @@ class WebSocketService {
             console.log("Latest-FriendRequest:", message);
         });
         this.messageHandlers.set("ReceiveMessage", (message: any) => {
-            console.log("ReceiveMessage:", message);
+            //console.log("ReceiveMessage:", message);
+            var receive_message: MessageInterface[] = [];
+            if (message.content.type === "text") {
+                receive_message.push({
+                    id: message.content.id,
+                    sender_id: message.content.senderid,
+                    type: "text",
+                    content: message.content.text,
+                    created_at: message.content.created_at
+                })
+            }else if (message.content.type === "system") {
+                receive_message.push({
+                    id: message.content.id,
+                    sender_id: "",
+                    type: "system",
+                    content: message.content.message,
+                    created_at: message.content.created_at
+                })
+            }
+
+            var msg:MessagesListInterface = {};
+            msg[message.content.roomid] = receive_message;
+            if (store.getState().roomsinfo.roomsInfo.focusRoom === message.content.roomid) {
+                //送信先ルームにフォーカスしている場合
+                store.dispatch(setMessages(msg));
+            }else{
+                //送信先ルームにフォーカスしていない場合
+                store.dispatch(setLatestMessages(msg));
+            }
         });
         //アクセストークンの再発行及び再認証
         this.messageHandlers.set("AuthInfo", async(message: any) => {
