@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { getFocusedRouteNameFromRoute, NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ScheduleHome from './../screens/schedulehome';
@@ -11,24 +11,19 @@ import { useBooleanContext, BooleanProvider } from '../context/LoginStatusContex
 import { get_usersinfo, refresh, RefreshJsonInterface } from '../api/api';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { AppDispatch, RootState } from '../redux/store';
-import { getUserDataAsync, setUserData, setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
+import { getUserDataAsync, setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 import { setErrorMessage } from '../redux/authErrorSlice';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { format } from 'date-fns-tz';
-import * as Crypto from 'expo-crypto';
-import { connectWebSocket, disconnectWebSocket, sendWebSocketMessage } from '../redux/webSocketSlice';
+import { connectWebSocket, sendWebSocketMessage } from '../redux/webSocketSlice';
 import { RoomsInfoInterface, setRoomsInfo } from '../redux/roomsInfoSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { setParticipantsInfo } from '../redux/participantsInfoSlice';
-import { deleteNotificationCategoryAsync } from 'expo-notifications';
 import { loadMessages } from '../database/messages';
-//import { useWebSocket } from '../context/WebSocketContext';
 
 const Tab = createBottomTabNavigator();
 
 function HomeScreen() {
-  const flag = false;//dev
-  const count = 1;//dev
   const db = useSQLiteContext();
   const { value, setValue } = useBooleanContext();
 
@@ -165,6 +160,16 @@ function HomeScreen() {
     return true;
   }
 
+  const message = useSelector((state: RootState) => state.messageslist.new_messages);
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    var new_count = 0;
+    for (const roomid in message) {
+      new_count += message[roomid].length;
+    }
+    setCount(new_count);
+  },[message]);
+
   return (
     <NavigationContainer>
         <Tab.Navigator screenOptions={{headerShown: false}}>
@@ -172,7 +177,7 @@ function HomeScreen() {
               tabBarIcon:({focused})=> <Icon name="home" size={24} color={focused?"#007AFF":"gray"}/>,
             }}/>
             <Tab.Screen name="チャット" component={ChatHome} options={({route}) => ({
-              tabBarBadge: flag ? count : undefined,
+              tabBarBadge: count===0 ? undefined : count,
               tabBarIcon:({focused})=> <Icon name="message1" size={24} color={focused?"#007AFF":"gray"} />,
               tabBarStyle:{display: getTabBarVisibility(route)?"flex":"none"}
             })}/>
