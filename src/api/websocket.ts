@@ -146,6 +146,7 @@ class WebSocketService {
             console.log("reply-CreateRoom:", response);
         });
         this.replyHandlers.set("reply-GetRoomsInfo", (response: any) => {});
+        this.replyHandlers.set("reply-SearchUsers", (response: any) => {});
     }
 
     connect(user_id: string, headers: { [key: string]: string } = {}): Promise<void> {
