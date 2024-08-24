@@ -45,7 +45,11 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
   const changeUsername = (text: string) => {
     setUsername(text);
     setError_message("");
-    setUsername_error("");
+    if (/[#]/.test(text)) {
+      setUsername_error("「#」は使用できません");
+    }else{
+      setUsername_error("");
+    }
   };
   const changePassword = (text: string) => {
     setPassword(text);
