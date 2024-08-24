@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {  Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, ListItem } from '@rneui/base'
@@ -9,10 +9,15 @@ import * as Crypto from 'expo-crypto';
 import { Avatar, Badge } from '@rneui/themed';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NativeStackScreenProps } from 'react-native-screens/lib/typescript/native-stack/types';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
 import { URL } from '../api/config';
+import Icon from 'react-native-vector-icons/AntDesign';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { Overlay } from '@rneui/themed';
+import { setAddFriend, setAddRoom } from '../redux/overlaySlice';
+import AddFriendScreen from './addfriend';
+import AddRoomScreen from './addroom';
 
 type RootStackParamList = {
   ChatHomeScreen: undefined;
@@ -33,8 +38,8 @@ export interface RoomListInterface {
 }
 
 function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScreen'>) {
+  const dispatch:AppDispatch = useDispatch();
   const [roomList, setRoomList] = useState<RoomListInterface[]>([]);
-  
   const rooms_info = useSelector((state: RootState) => state.roomsinfo.roomsInfo.rooms);
   const messages = useSelector((state: RootState) => state.messageslist.new_messages);
   const latest_message = useSelector((state: RootState) => state.messageslist.latest_message);
@@ -83,10 +88,10 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
         }
         return <View>{list}</View>;
       }())}*/
-
+  const addFriend = useSelector((state: RootState) => state.overlay.addfriend);
+  const addRoom = useSelector((state: RootState) => state.overlay.addroom);
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView style={styles.container}>
       {roomList.map((room) => (
         <ListItem key={room["id"]} onPress={() => navigation.navigate(
           "ChatScreen",{roomid: room["id"], roomname: room["name"]}
@@ -103,17 +108,48 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
           status="primary" />}
         </ListItem>
       ))}
+        <Overlay isVisible={addFriend} overlayStyle={{width: "70%", height: "70%"}}
+        onBackdropPress={() => dispatch(setAddFriend(false))}>
+          <AddFriendScreen />
+        </Overlay>
+        <Overlay isVisible={addRoom} overlayStyle={{width: "70%", height: "70%"}}
+        onBackdropPress={() => dispatch(setAddRoom(false))}>
+          <AddRoomScreen />
+        </Overlay>
       </ScrollView>
-    </SafeAreaView>
   );
 }
 
 export default function ChatHome() {
+  const dispatch:AppDispatch = useDispatch();
   return (
     <Stack.Navigator>
-      <Stack.Screen name="ChatHomeScreen" component={ChatHomeScreen} options={{headerShown:false}} />
+      <Stack.Screen name="ChatHomeScreen" component={ChatHomeScreen} options={{
+        header(props) {
+          return (
+            <SafeAreaView>
+            <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Text style={{fontSize: 24, marginLeft: 20}}>チャット</Text>
+              <Icon name={"adduser"} size={24} style={{marginLeft: "auto",marginRight: 20}} onPress={() => dispatch(setAddFriend(true))} />
+              <Icon name={"pluscircleo"} size={24} style={{marginRight: 20}} onPress={() => dispatch(setAddRoom(true))} />
+            </View>
+            </SafeAreaView>
+          );
+        },
+      }} />
       <Stack.Screen name="ChatScreen" component={Chat} options={({route}) => ({
-        title: route.params.roomname
+        header(props) {
+          return (
+            <SafeAreaView>
+            <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Icon name={"left"} size={24} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
+              <Text style={{marginLeft: 20,fontSize: 24}}>{route.params.roomname}</Text>
+              <Icon name={"adduser"} size={24} style={{marginLeft: "auto",marginRight: 20}} onPress={() => console.log("Setting")} />
+              <Icon name={"setting"} size={24} style={{marginRight: 20}} onPress={() => console.log("Setting")} />
+            </View>
+            </SafeAreaView>
+          );
+        }
       })}/>
     </Stack.Navigator>
   );
