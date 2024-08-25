@@ -96,7 +96,7 @@ export default function AddFriendScreen() {
         <View style={styles.searchRow} >
             <Icon name="search1" size={24} color="black" style={{width:"10%"}} />
             <TextInput
-            style={styles.input} 
+                style={styles.input} 
                 ref={input}
                 placeholder="ユーザー名もしくはID(#○○)を入力"
                 value={searchText}
