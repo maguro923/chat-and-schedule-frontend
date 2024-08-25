@@ -91,6 +91,12 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
   const addFriend = useSelector((state: RootState) => state.overlay.addfriend);
   const addRoom = useSelector((state: RootState) => state.overlay.addroom);
   return (
+    <>
+      {roomList.length === 0?
+      <View style={{flex:1,alignContent:'center',justifyContent:"center",backgroundColor:"#fff"}}>
+      <Text style={{fontSize:24,alignSelf:"center"}}>ルームがありません</Text>
+      </View>
+      :
       <ScrollView style={styles.container}>
       {roomList.map((room) => (
         <ListItem key={room["id"]} onPress={() => navigation.navigate(
@@ -108,15 +114,17 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
           status="primary" />}
         </ListItem>
       ))}
-        <Overlay isVisible={addFriend} overlayStyle={{width: "70%", height: "70%"}}
-        onBackdropPress={() => dispatch(setAddFriend(false))}>
-          <AddFriendScreen />
-        </Overlay>
-        <Overlay isVisible={addRoom} overlayStyle={{width: "70%", height: "70%"}}
-        onBackdropPress={() => dispatch(setAddRoom(false))}>
-          <AddRoomScreen />
-        </Overlay>
       </ScrollView>
+      }
+      <Overlay isVisible={addFriend} overlayStyle={{width: "90%", height: "70%"}}
+      onBackdropPress={() => dispatch(setAddFriend(false))}>
+        <AddFriendScreen />
+      </Overlay>
+      <Overlay isVisible={addRoom} overlayStyle={{width: "90%", height: "70%"}}
+      onBackdropPress={() => dispatch(setAddRoom(false))}>
+        <AddRoomScreen />
+      </Overlay>
+    </>
   );
 }
 
@@ -158,6 +166,7 @@ export default function ChatHome() {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff'
+      height: "100%",
+      backgroundColor: '#fff',
     },
 });
