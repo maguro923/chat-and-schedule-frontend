@@ -1,10 +1,11 @@
 import * as Crypto from 'expo-crypto';
 import { setLatestMessages ,MessagesListInterface, MessageInterface, setMessages } from '../redux/messagesListSlice';
 import { store } from '../redux/store';//循環インポートとなるが、storeを使うために必要なので無視
-import { refresh, RefreshJsonInterface } from './api';
+import { get_usersinfo, refresh, RefreshJsonInterface } from './api';
 import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 import { setErrorMessage } from '../redux/authErrorSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { addParticipantsInfo, setFriendRequests } from '../redux/participantsInfoSlice';
 
 const url = 'ws://192.168.0.150:8000/ws/';
 
@@ -113,8 +114,23 @@ class WebSocketService {
               }
         });
         //フレンドリクエスト受信
-        this.messageHandlers.set("FriendRequest", (message: any) => {
+        this.messageHandlers.set("FriendRequest", async(message: any) => {
             console.log("FriendRequest:", message);
+            const participants_list = store.getState().participantsinfo.participants;
+            const userdata = store.getState().userdata.userdata;
+            for (let request_id of message.content){
+                if (!(request_id in participants_list)) {
+                    //未登録のユーザーIDの場合
+                    const [status,res] = await get_usersinfo(userdata.access_token,userdata.id,request_id);
+                    if (status === 200){
+                        console.log("ユーザー情報を取得しました",res.users_info);
+                        store.dispatch(addParticipantsInfo(res.users_info));
+                    }else{
+                        console.error("ユーザー情報の取得に失敗しました",res);
+                    }
+                }
+                store.dispatch(setFriendRequests(request_id));
+            }
         });
         this.messageHandlers.set("Error", (message: any) => {
             console.error("Error:", message);
@@ -122,9 +138,7 @@ class WebSocketService {
 
         this.replyHandlers.set("reply-SendMessage", (response: any) => {});
         this.replyHandlers.set("reply-ReAuth", (response: any) => {});
-        this.replyHandlers.set("reply-Friend", (response: any) => {
-            console.log("reply-Friend:", response);
-        });
+        this.replyHandlers.set("reply-Friend", (response: any) => {});
         this.replyHandlers.set("reply-UnFriend", (response: any) => {
             console.log("reply-UnFriend:", response);
         });
@@ -145,6 +159,7 @@ class WebSocketService {
         });
         this.replyHandlers.set("reply-GetRoomsInfo", (response: any) => {});
         this.replyHandlers.set("reply-SearchUsers", (response: any) => {});
+        this.replyHandlers.set("reply-GetFriendList", (response: any) => {});
     }
 
     connect(user_id: string, headers: { [key: string]: string } = {}): Promise<void> {
