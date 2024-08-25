@@ -129,13 +129,14 @@ export async function refresh(userdata: RefreshJsonInterface) {
 }
 
 export async function get_usersinfo(access_token: string, user_id: string,participants: string[]) {
+    console.log("get_usersinfo",participants,JSON.stringify(participants));
     const [status,res] = await axios.get(
         `${URL}/users`,
         {headers: {
             'Content-Type': 'application/json',
             'access-token': access_token,
             'user-id': user_id,
-            'participants-id': participants
+            'participants-id': JSON.stringify(participants)
         }}
     )
         .then(res => {
