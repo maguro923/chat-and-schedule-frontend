@@ -44,9 +44,6 @@ class WebSocketService {
             };
             store.dispatch(setLatestMessages(LatestMsg));
         });
-        this.messageHandlers.set("Latest-FriendRequest", (message: any) => {
-            console.log("Latest-FriendRequest:", message);
-        });
         //受信したメッセージをstoreに保存
         this.messageHandlers.set("ReceiveMessage", (message: any) => {
             var receive_message: MessageInterface[] = [];
@@ -115,6 +112,7 @@ class WebSocketService {
                 console.error("アクセストークンの再発行に失敗しました");
               }
         });
+        //フレンドリクエスト受信
         this.messageHandlers.set("FriendRequest", (message: any) => {
             console.log("FriendRequest:", message);
         });
