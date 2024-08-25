@@ -18,7 +18,7 @@ import { format } from 'date-fns-tz';
 import { connectWebSocket, sendWebSocketMessage } from '../redux/webSocketSlice';
 import { RoomsInfoInterface, setRoomsInfo } from '../redux/roomsInfoSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { setParticipantsInfo } from '../redux/participantsInfoSlice';
+import { setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
 import { loadMessages } from '../database/messages';
 
 const Tab = createBottomTabNavigator();
@@ -46,13 +46,34 @@ function HomeScreen() {
     const GetUsersInfo = async (participants: string[]) => {
       const [status,res] = await get_usersinfo(userdata.userdata.access_token,userdata.userdata.id,participants);
       if(status === 200){
-        console.log("ユーザ情報を取得しました",res);
+        //DEV: console.log("ユーザ情報を取得しました",res);
         dispatch(setParticipantsInfo(res.users_info));
-        //getLocalMessages();
       }else{
         console.error("ユーザ情報の取得に失敗しました",res.detail);
       }
     }
+
+    //ルーム参加していないフレンドのIDを取得しユーザー情報取得リストに追加
+    const GetFrinendList = async (participants: string[]) => {
+      const result = await dispatch(sendWebSocketMessage({"type":"GetFriendList","content":{}}))
+      const response:any = unwrapResult(result);
+      console.log("フレンドリストを取得しました",response);
+      for (let friend of response.content.friend) {
+        if(!participants.includes(friend)){
+          participants.push(friend);
+        }
+      }
+      for (let req of response.content.request) {
+        if(!participants.includes(req)){
+          participants.push(req);
+        }
+      }
+      for (let request of response.content.request) {
+        dispatch(setFriendRequests(request));
+      }
+      GetUsersInfo(participants);
+    }
+
     const get_roomsinfo = async () => {
       if(is_connected_ws){
         try {
@@ -60,7 +81,7 @@ function HomeScreen() {
           const response:any = unwrapResult(result);
           if (response.content?.participants !== undefined && response.content?.participants !== null &&
               response.content?.roomlist !== undefined && response.content?.roomlist !== null) {
-                console.log("ルーム情報を取得しました",response.content);
+                //DEV: console.log("ルーム情報を取得しました",response.content);
                 dispatch(setRoomsInfo(response.content.roomlist as RoomsInfoInterface[]));
                 //ルーム参加者一覧のリストを抽出
                 let roomidlist:string[] = [];
@@ -77,7 +98,7 @@ function HomeScreen() {
                   });
                 }
                 loadMessages(db,dispatch,roomidlist,store.getState().messageslist.new_messages);
-                GetUsersInfo(userslist);
+                GetFrinendList(userslist);
           }else{
             console.error("ルーム情報の取得に失敗しました",response.content?.message);
           }

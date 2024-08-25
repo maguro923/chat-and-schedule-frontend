@@ -5,7 +5,7 @@ import { get_usersinfo, refresh, RefreshJsonInterface } from './api';
 import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 import { setErrorMessage } from '../redux/authErrorSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { addParticipantsInfo, setFriendRequests } from '../redux/participantsInfoSlice';
+import { addFriend, addParticipantsInfo, setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
 
 const url = 'ws://192.168.0.150:8000/ws/';
 
@@ -115,7 +115,6 @@ class WebSocketService {
         });
         //フレンドリクエスト受信
         this.messageHandlers.set("FriendRequest", async(message: any) => {
-            console.log("FriendRequest:", message);
             const participants_list = store.getState().participantsinfo.participants;
             const userdata = store.getState().userdata.userdata;
             for (let request_id of message.content){
@@ -131,6 +130,30 @@ class WebSocketService {
                 }
                 store.dispatch(setFriendRequests(request_id));
             }
+        });
+        //フレンド関係成立に対する処理
+        this.messageHandlers.set("Friend", async(message: any) => {
+            console.log("Friend:", message);
+            const participants = store.getState().participantsinfo
+            const participants_id:string[] = []
+            for (let id in participants.participants){
+                participants_id.push(id);
+            }
+            if (!participants_id.includes(message.content)){
+                const send_list:string[] = [];
+                send_list.push(message.content);
+                const userdata = store.getState().userdata.userdata;
+                const [status,res] = await get_usersinfo(userdata.access_token,userdata.id,send_list);
+                if(status === 200){
+                  //DEV: 
+                  console.log("ユーザ情報を取得しました",res);
+                  store.dispatch(setParticipantsInfo(res.users_info));
+                }else{
+                  console.error("ユーザ情報の取得に失敗しました",res.detail);
+                }
+            }
+            console.log("フレンド関係が成立しました",message.content);
+            store.dispatch(addFriend(message.content));
         });
         this.messageHandlers.set("Error", (message: any) => {
             console.error("Error:", message);

@@ -55,9 +55,20 @@ export const userDataSlice = createSlice({
                 state.sended_requests.push(action.payload);
             }
         },
+        addFriend: (state, action: PayloadAction<string>) => {
+            if (!state.friends.includes(action.payload)) {
+                state.friends.push(action.payload);
+            }
+            if (state.friend_requests.includes(action.payload)) {
+                state.friend_requests = state.friend_requests.filter((userid) => userid !== action.payload);
+            }
+            if (state.sended_requests.includes(action.payload)) {
+                state.sended_requests = state.sended_requests.filter((userid) => userid !== action.payload);
+            }
+        },
     },
 })
 
-export const { setParticipantsInfo,addParticipantsInfo,setFriendRequests,setSendedRequests } = userDataSlice.actions;//アクションオブジェクトの取得
+export const { setParticipantsInfo,addParticipantsInfo,setFriendRequests,setSendedRequests,addFriend } = userDataSlice.actions;//アクションオブジェクトの取得
 
 export default userDataSlice.reducer;
