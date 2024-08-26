@@ -257,7 +257,6 @@ class WebSocketService {
 
     private handleIncomingMessage(message: any) {
         const type = message.type;
-        console.log("Message type:", type);
         if (type && this.messageHandlers.has(type)) {
             this.messageHandlers.get(type)!(message);
         } else {
