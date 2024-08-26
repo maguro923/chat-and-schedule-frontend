@@ -170,7 +170,6 @@ export default function ChatHome() {
               <Icon name={"left"} size={24} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
               <Text style={{marginLeft: 20,fontSize: 24}}>{route.params.roomname}</Text>
               <Icon name={"adduser"} size={24} style={{marginLeft: "auto",marginRight: 20}} onPress={() => dispatch(setAddParticipant(true))} />
-              <Icon name={"setting"} size={24} style={{marginRight: 20}} onPress={() => console.log("Setting")} />
             </View>
             </SafeAreaView>
           );
@@ -179,6 +178,7 @@ export default function ChatHome() {
     </Stack.Navigator>
   );
 }
+//Icon name={"setting"} size={24} style={{marginRight: 20}} onPress={() => console.log("Setting")} />
 
 const styles = StyleSheet.create({
     container: {
