@@ -30,7 +30,6 @@ export default function AddParticipantScreen(props: {id: string}) {
     };
 
     const send_joinroomrequest = async() => {
-        console.log(select);
         let is_collect = true;
         for (let user of select){
             const result = await dispatch(sendWebSocketMessage({"type":"JoinRoom","content":{"roomid":props.id,"participants":user}}))
@@ -38,8 +37,6 @@ export default function AddParticipantScreen(props: {id: string}) {
             if (response.content.message !== "Room joined"){
                 console.error("ルーム参加招待に失敗しました",response.content?.message);
                 is_collect = false;
-            }else{
-                console.log("ルーム参加招待に成功しました",response.content)
             }
         }
         if (is_collect){
