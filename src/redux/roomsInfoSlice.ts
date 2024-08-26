@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { set } from "date-fns";
+import { add, set } from "date-fns";
 
 export interface RoomsInfoInterface {
     name: string;
@@ -8,10 +8,15 @@ export interface RoomsInfoInterface {
     joined_at: string;
 }
 
+export interface ParticipantsListInterface {
+    [roomid: string]: string[]
+}
+
 export  interface userDataInterface {
     roomsInfo:{
         rooms: RoomsInfoInterface[]
-        focusRoom: string
+        focusRoom: string,
+        participants: ParticipantsListInterface
     }
 }
 
@@ -20,7 +25,8 @@ export const userDataSlice = createSlice({
     initialState: {
         roomsInfo: {
             rooms: <RoomsInfoInterface[]>[],
-            focusRoom: ""
+            focusRoom: "",
+            participants: <ParticipantsListInterface>{}
         }
     },
     reducers: {
@@ -30,9 +36,23 @@ export const userDataSlice = createSlice({
         setFocusRoom: (state, action: PayloadAction<string>) => {
             state.roomsInfo.focusRoom = action.payload;
         },
+        addRoomInfo: (state, action: PayloadAction<RoomsInfoInterface>) => {
+            state.roomsInfo.rooms.push(action.payload);
+        },
+        addRoomParticipant: (state, action: PayloadAction<{id:string,participants:string[]}>) => {
+            if (state.roomsInfo.participants[action.payload.id] === undefined) {
+                state.roomsInfo.participants[action.payload.id] = action.payload.participants;
+            }else{
+                for (const participant of action.payload.participants) {
+                    if (!state.roomsInfo.participants[action.payload.id].includes(participant)) {
+                        state.roomsInfo.participants[action.payload.id].push(participant);
+                    }
+                }
+            }
+        }
     },
 })
 
-export const { setRoomsInfo, setFocusRoom } = userDataSlice.actions;//アクションオブジェクトの取得
+export const { setRoomsInfo, setFocusRoom, addRoomInfo,addRoomParticipant } = userDataSlice.actions;//アクションオブジェクトの取得
 
 export default userDataSlice.reducer;

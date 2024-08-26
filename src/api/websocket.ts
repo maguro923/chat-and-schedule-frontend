@@ -6,6 +6,8 @@ import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 import { setErrorMessage } from '../redux/authErrorSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { addFriend, addParticipantsInfo, setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
+import { addRoomInfo, addRoomParticipant } from '../redux/roomsInfoSlice';
+import AddRoomScreen from '../screens/addroom';
 
 const url = 'ws://192.168.0.150:8000/ws/';
 
@@ -155,6 +157,37 @@ class WebSocketService {
             console.log("フレンド関係が成立しました",message.content);
             store.dispatch(addFriend(message.content));
         });
+        //ルーム参加に対する処理
+        this.messageHandlers.set("JoinRoom", async(message: any) => {
+            console.log("JoinRoom:", message);
+            const participants = store.getState().participantsinfo.participants
+            store.dispatch(addRoomInfo({
+                "id":message.content.id,
+                "name":message.content.name,
+                "avatar_path":message.content.avatar_path,
+                "joined_at":message.content.joined_at}));
+            store.dispatch(addRoomParticipant({id:message.content.id,participants:message.content.participants}));
+            var participants_id:string[] = [];
+            for (let id in participants){
+                participants_id.push(id);
+            }
+            var send_list:string[] = [];
+            for (let id of message.content.participants){
+                if (!participants_id.includes(id) && id !== store.getState().userdata.userdata.id){
+                    send_list.push(id);
+                }
+            }
+            if (send_list.length !== 0){
+                const userdata = store.getState().userdata.userdata;
+                const [status,res] = await get_usersinfo(userdata.access_token,userdata.id,send_list);
+                if(status === 200){
+                    console.log("ユーザ情報を取得しました",res);
+                    store.dispatch(addParticipantsInfo(res.users_info));
+                }else{
+                    console.error("ユーザ情報の取得に失敗しました",res.detail);
+                }
+            }
+        });
         this.messageHandlers.set("Error", (message: any) => {
             console.error("Error:", message);
         });
@@ -171,9 +204,7 @@ class WebSocketService {
         this.replyHandlers.set("reply-UnFocus", (response: any) => {
             console.log("reply-UnFocus:", response);
         });
-        this.replyHandlers.set("reply-JoinRoom", (response: any) => {
-            console.log("reply-JoinRoom:", response);
-        });
+        this.replyHandlers.set("reply-JoinRoom", (response: any) => {});
         this.replyHandlers.set("reply-LeaveRoom", (response: any) => {
             console.log("reply-LeaveRoom:", response);
         });
