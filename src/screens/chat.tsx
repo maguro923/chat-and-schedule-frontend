@@ -154,13 +154,26 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
   //チャット画面のフォーカス、アンフォーカス時の処理
   const isFocused = useIsFocused();
   useEffect(() => {
-    if (isFocused) {
-      dispatch(setFocusRoom(route.params.roomid));
-      focusChatRoom(db ,dispatch, route.params.roomid, messagesList?.new_messages);
-    }else{
-      dispatch(setFocusRoom(""));
-      console.log('ChatHomeScreen is not focused');
+    const do_check_focus = async() => {
+      if (isFocused) {
+        dispatch(setFocusRoom(route.params.roomid));
+        const result = await dispatch(sendWebSocketMessage({"type":"Focus","content":{"roomid":route.params.roomid}}));
+        const response:any = unwrapResult(result);
+        if (response.content?.message === "Already focused" || response.content?.message === "Focused"){
+          focusChatRoom(db ,dispatch, route.params.roomid, messagesList?.new_messages);
+        }else{
+          console.error("フォーカスに失敗しました",response.content?.message);
+        }
+      }else{
+        dispatch(setFocusRoom(""));
+        const result = await dispatch(sendWebSocketMessage({"type":"UnFocus","content":{"roomid":route.params.roomid}}));
+        const response:any = unwrapResult(result);
+        if (response.content?.message !== "Already unfocused" && response.content?.message !== "Unfocused"){
+          console.error("アンフォーカスに失敗しました",response.content?.message);
+        }
+      }
     }
+    do_check_focus();
   }, [isFocused]);
 
   // 送信ボタン押下時に呼ばれる
