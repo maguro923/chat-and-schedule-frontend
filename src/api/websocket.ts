@@ -8,6 +8,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { addFriend, addParticipantsInfo, setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
 import { addRoomInfo, addRoomParticipant } from '../redux/roomsInfoSlice';
 import AddRoomScreen from '../screens/addroom';
+import { save_messages } from '../database/savemessage';
 
 const url = 'ws://192.168.0.150:8000/ws/';
 
@@ -73,6 +74,7 @@ class WebSocketService {
             if (store.getState().roomsinfo.roomsInfo.focusRoom === message.content.roomid) {
                 //送信先ルームにフォーカスしている場合
                 store.dispatch(setMessages(msg));
+                save_messages(message.content);
             }else{
                 //送信先ルームにフォーカスしていない場合
                 store.dispatch(setLatestMessages(msg));
@@ -197,12 +199,8 @@ class WebSocketService {
         this.replyHandlers.set("reply-UnFriend", (response: any) => {
             console.log("reply-UnFriend:", response);
         });
-        this.replyHandlers.set("reply-Focus", (response: any) => {
-            console.log("reply-Focus:", response);
-        });
-        this.replyHandlers.set("reply-UnFocus", (response: any) => {
-            console.log("reply-UnFocus:", response);
-        });
+        this.replyHandlers.set("reply-Focus", (response: any) => {});
+        this.replyHandlers.set("reply-UnFocus", (response: any) => {});
         this.replyHandlers.set("reply-JoinRoom", (response: any) => {});
         this.replyHandlers.set("reply-LeaveRoom", (response: any) => {});
         this.replyHandlers.set("reply-CreateRoom", (response: any) => {});
