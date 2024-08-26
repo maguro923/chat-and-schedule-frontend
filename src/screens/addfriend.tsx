@@ -89,7 +89,7 @@ export default function AddFriendScreen() {
         {Platform.OS === 'ios' ? (
         <KeyboardAvoidingView>
         <View style={styles.header}>
-            <Text style={{fontSize:24}}>フレンドを追加</Text>
+            <Text style={{fontSize:24,fontWeight:"bold"}}>フレンドを追加</Text>
             <Icon name="close" size={32} color="black" style={{width:"10%",marginLeft:"auto"}} 
             onPress={() => dispatch(setAddFriend(false))}/>
         </View>
