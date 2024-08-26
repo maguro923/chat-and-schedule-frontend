@@ -20,7 +20,9 @@ export const loadMessages = async(db:SQLiteDatabase,dispatch:AppDispatch ,roomid
                 content: msg.content,
                 created_at: msg.created_at
             };
-            room_msg.push(message_info);
+            console.log("loadMessages:",message_info);
+            room_msg = [...room_msg, message_info];
+            console.log("room_msg:",room_msg);
         } 
         messageslist[roomid] = room_msg;
     }
