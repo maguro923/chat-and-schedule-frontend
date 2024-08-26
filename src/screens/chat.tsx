@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Actions, Avatar, GiftedChat, IMessage, Send, SystemMessage } from 'react-native-gifted-chat';
+import { Actions, Avatar, Bubble, GiftedChat, IMessage, Send, SystemMessage } from 'react-native-gifted-chat';
 import * as Crypto from 'expo-crypto';
 import * as Clipboard from 'expo-clipboard';
 import { RootStackScreenProps } from './chathome';
@@ -25,11 +25,23 @@ import AddParticipantScreen from './addparticipant';
 // カスタムアバター
 const CustomAvatar = (props: any) => {
   return (
-    <View>
+    <View style={{}}>
       <Image
         source={{ uri: props.currentMessage.user.avatar }}
         style={{ width: 40, height: 40, borderRadius: 20 }}
       />
+    </View>
+  );
+};
+
+// カスタムメッセージバブル
+const CustomMessageBubble = (props: any) => {
+  return (
+    <View style={{}}>
+      {props.currentMessage.user._id !== props.user._id ? <Text style={{}}>
+        {props.currentMessage.user.name}
+      </Text>:<></>}
+      <Bubble {...props} />
     </View>
   );
 };
@@ -51,9 +63,6 @@ const CustomActions = (props: any) => {
     <Actions
       {...props}
       options={{
-        'Copy Text': (props:any) => {
-          Clipboard.setStringAsync(props.currentMessage.text);
-        },
         "Delete": () => {},
         'Cancel': () => {
           console.log("Cancel");
@@ -202,12 +211,15 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
           locale="ja"
           renderAvatar={(props) => <CustomAvatar {...props} />}
           renderSend={(props) => <CustomSend {...props} />}
-          renderActions={(props) => <CustomActions {...props} />}
+          //renderActions={(props) => <CustomActions {...props} />}
           //renderMessageText={(props) => <CustomMessageText {...props} />}
+          showAvatarForEveryMessage={true}
+          renderBubble={(props) => <CustomMessageBubble {...props} />}
           onLongPress={(context, message) => handleLongPress(context, message)}
           timeFormat='HH:mm'
           dateFormat='YYYY年MM月DD日'
           //renderDay={(props) => <CustomRenderDay {...props} />}
+          renderAvatarOnTop={true}
           renderSystemMessage={(props) => <CustomSystemMessage {...props} />}
         />
       </SafeAreaView>
