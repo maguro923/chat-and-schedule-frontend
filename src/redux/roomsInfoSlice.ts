@@ -49,10 +49,19 @@ export const userDataSlice = createSlice({
                     }
                 }
             }
+        },
+        deleteRoominfo: (state, action: PayloadAction<string>) => {
+            state.roomsInfo.rooms = state.roomsInfo.rooms.filter(room => room.id !== action.payload);
+            if (state.roomsInfo.focusRoom === action.payload){
+                state.roomsInfo.focusRoom = "";
+            }
+            if (state.roomsInfo.participants[action.payload] !== undefined){
+                delete state.roomsInfo.participants[action.payload];
+            }
         }
     },
 })
 
-export const { setRoomsInfo, setFocusRoom, addRoomInfo,addRoomParticipant } = userDataSlice.actions;//アクションオブジェクトの取得
+export const { setRoomsInfo, setFocusRoom, addRoomInfo,addRoomParticipant,deleteRoominfo } = userDataSlice.actions;//アクションオブジェクトの取得
 
 export default userDataSlice.reducer;
