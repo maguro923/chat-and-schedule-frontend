@@ -11,7 +11,7 @@ interface MessageInterface {
     created_at: string;
 }
 
-export function focusChatRoom(db:SQLiteDatabase, dispatch:AppDispatch, roomid:string, new_messages:MessagesListInterface) {
+export function focusChatRoom(db:SQLiteDatabase, dispatch:AppDispatch, roomid:string, new_messages:MessagesListInterface|undefined) {
     const setMessages = async(message:MessageInterface) => {
         try{
         await db.runAsync(`INSERT INTO messages 
@@ -22,16 +22,18 @@ export function focusChatRoom(db:SQLiteDatabase, dispatch:AppDispatch, roomid:st
             console.log('ERROR:',err);
         }
     };
-    for (const new_message of new_messages[roomid]){
-        const message:MessageInterface = {
-            id: new_message.id,
-            room_id: roomid,
-            sender_id: new_message.sender_id,
-            type: new_message.type,
-            content: new_message.content,
-            created_at: new_message.created_at
-        };
-        setMessages(message);
+    if (new_messages!==undefined && roomid in new_messages){
+        for (const new_message of new_messages[roomid]){
+            const message:MessageInterface = {
+                id: new_message.id,
+                room_id: roomid,
+                sender_id: new_message.sender_id,
+                type: new_message.type,
+                content: new_message.content,
+                created_at: new_message.created_at
+            };
+            setMessages(message);
+        }
     }
     //const a = db.getAllSync("SELECT * FROM messages WHERE room_id = ? ORDER BY created_at DESC LIMIT 1000",roomid);
     //console.log('RESULT IS:',a);
