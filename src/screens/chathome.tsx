@@ -21,6 +21,7 @@ import AddRoomScreen from './addroom';
 import { sendWebSocketMessage } from '../redux/webSocketSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { deleteRoominfo } from '../redux/roomsInfoSlice';
+import { delete_messages } from '../database/deletemessages';
 
 type RootStackParamList = {
   ChatHomeScreen: undefined;
@@ -77,6 +78,7 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
       console.error("ルーム退出に失敗しました",response.content?.message);
     }else{
       dispatch(deleteRoominfo(longPressID));
+      delete_messages(longPressID);
     }
     setIs_RoomSetting(false);
   }
