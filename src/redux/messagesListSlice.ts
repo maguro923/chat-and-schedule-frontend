@@ -104,6 +104,9 @@ export const userDataSlice = createSlice({
             for (const roomid in action.payload) {
                 if (Object.prototype.hasOwnProperty.call(action.payload, roomid)) {
                     //state.messages[roomid] = [...state.messages[roomid],...action.payload[roomid]];
+                    if (state.messages[roomid] === undefined) {
+                        state.messages[roomid] = [];
+                    }
                     state.messages[roomid] = [...state.messages[roomid],...action.payload[roomid]];
                     const messages = action.payload[roomid];
                     if (messages.length > 0) {
