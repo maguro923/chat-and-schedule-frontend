@@ -19,7 +19,7 @@ import { connectWebSocket, sendWebSocketMessage } from '../redux/webSocketSlice'
 import { addRoomParticipant, RoomsInfoInterface, setRoomsInfo } from '../redux/roomsInfoSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
-import { loadMessages } from '../database/messages';
+import { loadMessages } from '../database/loadmessages';
 
 const Tab = createBottomTabNavigator();
 
