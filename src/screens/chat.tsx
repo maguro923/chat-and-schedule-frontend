@@ -109,6 +109,7 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
   // メッセージリストの取得
   const messagesList = useSelector((state: RootState) => state.messageslist);
   const participants = useSelector((state: RootState) => state.participantsinfo.participants);
+  const room_participants = useSelector((state: RootState) => state.roomsinfo.roomsInfo.participants);
   useEffect(() => {
     const raw_msg_list = messagesList.messages[route.params.roomid]
     const msg_list: IMessage[] = [];
@@ -121,8 +122,8 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
             createdAt: parse(msg.created_at,'yyyy-MM-dd HH:mm:ss.SSSSSSXXX',new Date()),
             user: {
               _id: msg.sender_id,
-              name: userdata.id===msg.sender_id ? userdata.name : participants[msg.sender_id].name,
-              avatar: userdata.id===msg.sender_id ? URL+userdata.avatar_path : URL+participants[msg.sender_id].avatar_path,
+              name: room_participants[route.params.roomid].includes(msg.sender_id) ? userdata.id===msg.sender_id ? userdata.name : participants[msg.sender_id].name : "unknown",
+              avatar: room_participants[route.params.roomid].includes(msg.sender_id) ? userdata.id===msg.sender_id ? URL+userdata.avatar_path : URL+participants[msg.sender_id].avatar_path: URL+"/avatars/users/default.png",
             },
           });
         }else if (msg.type === "system") {
