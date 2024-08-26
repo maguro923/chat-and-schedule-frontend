@@ -103,6 +103,8 @@ export default function AddRoomScreen() {
                                 "id": response.content.id,
                                 "avatar_path": "/avatars/rooms/default.png",
                                 "joined_at": format(new Date(), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})}))
+                        }else{
+                            console.error("ルーム作成に失敗しました",response.content?.message);
                         }
                         dispatch(setAddRoom(false));
                     }} />
