@@ -16,7 +16,7 @@ import { setErrorMessage } from '../redux/authErrorSlice';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { format } from 'date-fns-tz';
 import { connectWebSocket, sendWebSocketMessage } from '../redux/webSocketSlice';
-import { RoomsInfoInterface, setRoomsInfo } from '../redux/roomsInfoSlice';
+import { addRoomParticipant, RoomsInfoInterface, setRoomsInfo } from '../redux/roomsInfoSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
 import { loadMessages } from '../database/messages';
@@ -96,6 +96,9 @@ function HomeScreen() {
                       userslist.push(id);
                     }
                   });
+                }
+                for (let roomid in response.content.participants) {
+                  dispatch(addRoomParticipant({id: roomid, participants: response.content.participants[roomid]}));
                 }
                 loadMessages(db,dispatch,roomidlist,store.getState().messageslist.new_messages);
                 GetFrinendList(userslist);

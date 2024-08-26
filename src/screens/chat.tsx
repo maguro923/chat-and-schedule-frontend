@@ -18,6 +18,9 @@ import { sendWebSocketMessage } from '../redux/webSocketSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { ScrollView } from 'react-native-gesture-handler';
 import { setFocusRoom } from '../redux/roomsInfoSlice';
+import { setAddParticipant } from '../redux/overlaySlice';
+import { Overlay } from '@rneui/themed';
+import AddParticipantScreen from './addparticipant';
 
 // カスタムアバター
 const CustomAvatar = (props: any) => {
@@ -101,6 +104,7 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
   const dispatch: AppDispatch = useDispatch();
   const db = useSQLiteContext();
   const [messages, setMessages] = useState<IMessage[]>([]); // メッセージリスト
+  const addParticipant = useSelector((state: RootState) => state.overlay.addparticipant);
 
   // メッセージリストの取得
   const messagesList = useSelector((state: RootState) => state.messageslist);
@@ -108,29 +112,31 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
   useEffect(() => {
     const raw_msg_list = messagesList.messages[route.params.roomid]
     const msg_list: IMessage[] = [];
-    for (const msg of raw_msg_list) {
-      if (msg.type === "text") {
-        msg_list.push({
-          _id: msg.id,
-          text: msg.content,
-          createdAt: parse(msg.created_at,'yyyy-MM-dd HH:mm:ss.SSSSSSXXX',new Date()),
-          user: {
-            _id: msg.sender_id,
-            name: userdata.id===msg.sender_id ? userdata.name : participants[msg.sender_id].name,
-            avatar: userdata.id===msg.sender_id ? URL+userdata.avatar_path : URL+participants[msg.sender_id].avatar_path,
-          },
-        });
-      }else if (msg.type === "system") {
-        msg_list.push({
-          system: true,
-          _id: msg.id,
-          text: msg.content,
-          createdAt: parse(msg.created_at,'yyyy-MM-dd HH:mm:ss.SSSSSSXXX',new Date()),
-          user: {
-            _id: msg.sender_id,
-          },
-        });
-      }
+    if (raw_msg_list !== undefined) {
+      for (const msg of raw_msg_list) {
+        if (msg.type === "text") {
+          msg_list.push({
+            _id: msg.id,
+            text: msg.content,
+            createdAt: parse(msg.created_at,'yyyy-MM-dd HH:mm:ss.SSSSSSXXX',new Date()),
+            user: {
+              _id: msg.sender_id,
+              name: userdata.id===msg.sender_id ? userdata.name : participants[msg.sender_id].name,
+              avatar: userdata.id===msg.sender_id ? URL+userdata.avatar_path : URL+participants[msg.sender_id].avatar_path,
+            },
+          });
+        }else if (msg.type === "system") {
+          msg_list.push({
+            system: true,
+            _id: msg.id,
+            text: msg.content,
+            createdAt: parse(msg.created_at,'yyyy-MM-dd HH:mm:ss.SSSSSSXXX',new Date()),
+            user: {
+              _id: msg.sender_id,
+            },
+          });
+        }
+    }
     }
     setMessages(msg_list);
   }, [messagesList]);
@@ -140,7 +146,7 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
   useEffect(() => {
     if (isFocused) {
       dispatch(setFocusRoom(route.params.roomid));
-      focusChatRoom(db ,dispatch, route.params.roomid, messagesList.new_messages);
+      focusChatRoom(db ,dispatch, route.params.roomid, messagesList?.new_messages);
     }else{
       dispatch(setFocusRoom(""));
       console.log('ChatHomeScreen is not focused');
@@ -185,24 +191,30 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <GiftedChat
-        messages={messages}
-        placeholder="メッセージを入力"
-        onSend={messages => onSend(messages)}
-        user={user}
-        locale="ja"
-        renderAvatar={(props) => <CustomAvatar {...props} />}
-        renderSend={(props) => <CustomSend {...props} />}
-        renderActions={(props) => <CustomActions {...props} />}
-        //renderMessageText={(props) => <CustomMessageText {...props} />}
-        onLongPress={(context, message) => handleLongPress(context, message)}
-        timeFormat='HH:mm'
-        dateFormat='YYYY年MM月DD日'
-        //renderDay={(props) => <CustomRenderDay {...props} />}
-        renderSystemMessage={(props) => <CustomSystemMessage {...props} />}
-      />
-    </SafeAreaView>
+    <>
+      <SafeAreaView style={styles.container}>
+        <GiftedChat
+          messages={messages}
+          placeholder="メッセージを入力"
+          onSend={messages => onSend(messages)}
+          user={user}
+          locale="ja"
+          renderAvatar={(props) => <CustomAvatar {...props} />}
+          renderSend={(props) => <CustomSend {...props} />}
+          renderActions={(props) => <CustomActions {...props} />}
+          //renderMessageText={(props) => <CustomMessageText {...props} />}
+          onLongPress={(context, message) => handleLongPress(context, message)}
+          timeFormat='HH:mm'
+          dateFormat='YYYY年MM月DD日'
+          //renderDay={(props) => <CustomRenderDay {...props} />}
+          renderSystemMessage={(props) => <CustomSystemMessage {...props} />}
+        />
+      </SafeAreaView>
+      <Overlay isVisible={addParticipant} overlayStyle={{width: "90%", height: "70%"}}
+      onBackdropPress={() => dispatch(setAddParticipant(false))}>
+        <AddParticipantScreen id={route.params.roomid} />
+      </Overlay>
+    </>
   );
 }
 
