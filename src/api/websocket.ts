@@ -61,7 +61,7 @@ class WebSocketService {
             }else if (message.content.type === "system") {
                 receive_message.push({
                     id: message.content.id,
-                    sender_id: "",
+                    sender_id: "None",
                     type: "system",
                     content: message.content.message,
                     created_at: message.content.created_at
@@ -159,7 +159,6 @@ class WebSocketService {
         });
         //ルーム参加に対する処理
         this.messageHandlers.set("JoinRoom", async(message: any) => {
-            console.log("JoinRoom:", message);
             const participants = store.getState().participantsinfo.participants
             store.dispatch(addRoomInfo({
                 "id":message.content.id,
@@ -205,12 +204,8 @@ class WebSocketService {
             console.log("reply-UnFocus:", response);
         });
         this.replyHandlers.set("reply-JoinRoom", (response: any) => {});
-        this.replyHandlers.set("reply-LeaveRoom", (response: any) => {
-            console.log("reply-LeaveRoom:", response);
-        });
-        this.replyHandlers.set("reply-CreateRoom", (response: any) => {
-            console.log("reply-CreateRoom:", response);
-        });
+        this.replyHandlers.set("reply-LeaveRoom", (response: any) => {});
+        this.replyHandlers.set("reply-CreateRoom", (response: any) => {});
         this.replyHandlers.set("reply-GetRoomsInfo", (response: any) => {});
         this.replyHandlers.set("reply-SearchUsers", (response: any) => {});
         this.replyHandlers.set("reply-GetFriendList", (response: any) => {});
