@@ -1,1 +1,1 @@
-export const URL: string = 'http://192.168.0.150:8000';
+export const URL: string = 'https://api.chat-and-schedule.com';
