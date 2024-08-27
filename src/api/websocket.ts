@@ -10,7 +10,7 @@ import { addRoomInfo, addRoomParticipant, deleteRoomParticipant, RoomsInfoInterf
 import AddRoomScreen from '../screens/addroom';
 import { save_messages } from '../database/savemessage';
 
-const url = 'ws://192.168.0.150:8000/ws/';
+const url = 'wss://api.chat-and-schedule.com/ws/';
 
 type MessageHandler = (message: any) => void;
 type ReplyHandler = (response: any) => void;
