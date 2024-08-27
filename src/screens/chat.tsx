@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { format } from 'date-fns-tz';
 import { parse } from 'date-fns';
-import { MessageInterface, setSendMessage } from '../redux/messagesListSlice';
+import { focusMessages, MessageInterface, setSendMessage } from '../redux/messagesListSlice';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { focusChatRoom } from '../utils/focus';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -157,6 +157,7 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
     const do_check_focus = async() => {
       if (isFocused) {
         dispatch(setFocusRoom(route.params.roomid));
+        dispatch(focusMessages({roomid:route.params.roomid}));
         const result = await dispatch(sendWebSocketMessage({"type":"Focus","content":{"roomid":route.params.roomid}}));
         const response:any = unwrapResult(result);
         if (response.content?.message === "Already focused" || response.content?.message === "Focused"){
@@ -201,6 +202,18 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
     const response:any = unwrapResult(result);
     if (response.content?.message === "Message sent"){
       console.log("メッセージを送信しました");
+      //既読時間を更新することで突然の切断に対応する
+      const roomid = route.params.roomid;
+      const result0 = await dispatch(sendWebSocketMessage({"type":"UnFocus","content":{"roomid":roomid}}));
+      const response0:any = unwrapResult(result0);
+      if (response0.content?.message !== "Already unfocused" && response0.content?.message !== "Unfocused"){
+        console.error("アンフォーカスに失敗しました",response0.content?.message);
+      }
+      const result1 = await dispatch(sendWebSocketMessage({"type":"Focus","content":{"roomid":roomid}}));
+      const response1:any = unwrapResult(result1);
+      if (response1.content?.message !== "Already focused" && response1.content?.message !== "Focused"){
+        console.error("フォーカスに失敗しました",response1.content?.message);
+      }
     }else{
       console.error("メッセージの送信に失敗しました",response);
     }

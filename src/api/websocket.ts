@@ -9,6 +9,7 @@ import { addFriend, addParticipantsInfo, setFriendRequests, setParticipantsInfo 
 import { addRoomInfo, addRoomParticipant } from '../redux/roomsInfoSlice';
 import AddRoomScreen from '../screens/addroom';
 import { save_messages } from '../database/savemessage';
+import { sendWebSocketMessage } from '../redux/webSocketSlice';
 
 const url = 'ws://192.168.0.150:8000/ws/';
 
@@ -49,7 +50,7 @@ class WebSocketService {
             store.dispatch(setLatestMessages(LatestMsg));
         });
         //受信したメッセージをstoreに保存
-        this.messageHandlers.set("ReceiveMessage", (message: any) => {
+        this.messageHandlers.set("ReceiveMessage", async(message: any) => {
             var receive_message: MessageInterface[] = [];
             if (message.content.type === "text") {
                 receive_message.push({
@@ -75,6 +76,18 @@ class WebSocketService {
                 //送信先ルームにフォーカスしている場合
                 store.dispatch(setMessages(msg));
                 save_messages(message.content);
+                //既読時間を更新することで突然の切断に対応する
+                const roomid = message.content.roomid
+                const result0 = await store.dispatch(sendWebSocketMessage({"type":"UnFocus","content":{"roomid":roomid}}));
+                const response0:any = unwrapResult(result0);
+                if (response0.content?.message !== "Already unfocused" && response0.content?.message !== "Unfocused"){
+                  console.error("アンフォーカスに失敗しました",response0.content?.message);
+                }
+                const result1 = await store.dispatch(sendWebSocketMessage({"type":"Focus","content":{"roomid":roomid}}));
+                const response1:any = unwrapResult(result1);
+                if (response1.content?.message !== "Already focused" && response1.content?.message !== "Focused"){
+                  console.error("フォーカスに失敗しました",response1.content?.message);
+                }
             }else{
                 //送信先ルームにフォーカスしていない場合
                 store.dispatch(setLatestMessages(msg));

@@ -22,6 +22,7 @@ import { sendWebSocketMessage } from '../redux/webSocketSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { deleteRoominfo } from '../redux/roomsInfoSlice';
 import { delete_messages } from '../database/deletemessages';
+import { focusMessages } from '../redux/messagesListSlice';
 
 type RootStackParamList = {
   ChatHomeScreen: undefined;
@@ -79,6 +80,7 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
     }else{
       dispatch(deleteRoominfo(longPressID));
       delete_messages(longPressID);
+      dispatch(focusMessages({roomid:longPressID}));
     }
     setIs_RoomSetting(false);
   }

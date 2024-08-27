@@ -13,11 +13,12 @@ interface MessageInterface {
 
 export function focusChatRoom(db:SQLiteDatabase, dispatch:AppDispatch, roomid:string, new_messages:MessagesListInterface|undefined) {
     const setMessages = async(message:MessageInterface) => {
+        console.log("set_latest_messages:",message);
         try{
-        await db.runAsync(`INSERT INTO messages 
-            (id, room_id, sender_id, type, content, created_at) 
-            VALUES (?, ?, ?, ?, ?, ?)`, 
-            [message.id, message.room_id, message.sender_id, message.type, message.content, message.created_at]);
+            await db.runAsync(`INSERT INTO messages 
+                (id, room_id, sender_id, type, content, created_at) 
+                VALUES (?, ?, ?, ?, ?, ?)`, 
+                [message.id, message.room_id, message.sender_id, message.type, message.content, message.created_at]);
         }catch(err){
             console.log('ERROR:',err);
         }
@@ -37,5 +38,4 @@ export function focusChatRoom(db:SQLiteDatabase, dispatch:AppDispatch, roomid:st
     }
     //const a = db.getAllSync("SELECT * FROM messages WHERE room_id = ? ORDER BY created_at DESC LIMIT 1000",roomid);
     //console.log('RESULT IS:',a);
-    dispatch(focusMessages({roomid: roomid}));
 }
