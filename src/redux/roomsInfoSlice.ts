@@ -50,6 +50,11 @@ export const userDataSlice = createSlice({
                 }
             }
         },
+        deleteRoomParticipant: (state, action: PayloadAction<{roomid:string,participant:string}>) => {
+            if (state.roomsInfo.participants[action.payload.roomid] !== undefined){
+                state.roomsInfo.participants[action.payload.roomid] = state.roomsInfo.participants[action.payload.roomid].filter(participant => participant !== action.payload.participant);
+            }
+        },
         deleteRoominfo: (state, action: PayloadAction<string>) => {
             state.roomsInfo.rooms = state.roomsInfo.rooms.filter(room => room.id !== action.payload);
             if (state.roomsInfo.focusRoom === action.payload){
@@ -62,6 +67,6 @@ export const userDataSlice = createSlice({
     },
 })
 
-export const { setRoomsInfo, setFocusRoom, addRoomInfo,addRoomParticipant,deleteRoominfo } = userDataSlice.actions;//アクションオブジェクトの取得
+export const { setRoomsInfo, setFocusRoom, addRoomInfo,addRoomParticipant,deleteRoominfo,deleteRoomParticipant } = userDataSlice.actions;//アクションオブジェクトの取得
 
 export default userDataSlice.reducer;

@@ -6,7 +6,7 @@ import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 import { setErrorMessage } from '../redux/authErrorSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { addFriend, addParticipantsInfo, setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
-import { addRoomInfo, addRoomParticipant } from '../redux/roomsInfoSlice';
+import { addRoomInfo, addRoomParticipant, deleteRoomParticipant, RoomsInfoInterface, setRoomsInfo } from '../redux/roomsInfoSlice';
 import AddRoomScreen from '../screens/addroom';
 import { save_messages } from '../database/savemessage';
 import { sendWebSocketMessage } from '../redux/webSocketSlice';
@@ -61,6 +61,9 @@ class WebSocketService {
                     created_at: message.content.created_at
                 })
             }else if (message.content.type === "system") {
+                if (message.info !== undefined && message.info.type === "LeaveRoom" && message.info.id !== undefined){
+                    store.dispatch(deleteRoomParticipant({roomid:message.content.roomid,participant:message.info.id}));
+                }
                 receive_message.push({
                     id: message.content.id,
                     sender_id: "None",
