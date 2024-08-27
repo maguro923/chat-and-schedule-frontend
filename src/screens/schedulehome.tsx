@@ -1,74 +1,63 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
-import { useBooleanContext } from '../context/LoginStatusContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '@rneui/base';
-import { deluser, DeleteUserInterface } from '../api/api';
-import { AppDispatch, RootState } from '../redux/store';
-import { useDispatch, useSelector } from 'react-redux';
-import { getUserDataAsync } from '../redux/userDataSlice';
+import { Calendar, CalendarList, Agenda, LocaleConfig } from 'react-native-calendars';
+
+//日本語化
+LocaleConfig.locales.jp = {
+    monthNames: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+    monthNamesShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+    dayNames: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
+    dayNamesShort: ['日', '月', '火', '水', '木', '金', '土'],
+};
+LocaleConfig.defaultLocale = 'jp';
 
 export default function ScheduleHome() {
-    const { value, setValue } = useBooleanContext();
-
-    const dispatch: AppDispatch = useDispatch();
-    const userdata = useSelector((state: RootState) => state.userdata);
-    const deviceid = useSelector((state: RootState) => state.deviceid);
-
-    /*useEffect(() => {
-        (async() => {
-            await dispatch(getUserDataAsync());
-        })()
-    },[]);*/
-
-    async function logout() {
-        console.log("logout",value);
-        await SecureStore.deleteItemAsync("username");
-        await SecureStore.deleteItemAsync("access_token");
-        await SecureStore.deleteItemAsync("access_token_expires");
-        await SecureStore.deleteItemAsync("refresh_token_expires");
-        await SecureStore.deleteItemAsync("refresh_token");
-    }
-
-    const testjson:DeleteUserInterface = {
-        id: userdata.userdata.id,
-        access_token: userdata.userdata.access_token,
-        password: "Password1",
-        deviceid: deviceid.deviceid
-    }
-
+    const [selected, setSelected] = useState('');
     return (
         <SafeAreaView style={styles.container}>
-        <Text style={{color:"blue",fontSize:15}}>This is ScheduleHome.</Text>
-        <Pressable onPress={async() => {
-            await logout()
-            .then(() => {
-                setValue(false);
-                //console.log("logout end:",value);
-            });
-            }}>
-            <Text style={{fontSize:20}}>Logout</Text>
-        </Pressable>
-        <Button
-            title="delete"
-            containerStyle={styles.button}
-            onPress={async() => {
-              const [status,res] = await deluser(testjson);
-              console.log("status:",status);
-              console.log("res:",res);
-            }}
-        />
+            <Calendar
+                showSixWeeks
+                pastScrollRange={36}//3年前まで表示
+                futureScrollRange={24}//2年先まで表示
+                monthFormat="yyyy年 M月"
+                onDayPress={(day:any) => {
+                    setSelected(day.dateString);
+                }}
+                markedDates={{
+                    [selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+                }}
+                style={{height: "100%",width: "100%",}}
+                theme={{
+                    'stylesheet.calendar.main': {
+                      monthView: {
+                        flex: 1,
+                        height: '100%',
+                        justifyContent: 'space-around'
+                      },
+                      week: {
+                        flex: 1,
+                        marginVertical: 0,
+                        flexDirection: 'row',
+                        justifyContent: 'space-around'
+                      },
+                      dayContainer: {
+                        borderColor: '#f5f5f5',
+                        borderWidth: 1,
+                        flex:1,
+                      },
+                    }
+                  }}
+                />
         </SafeAreaView>
     );
 }
 
+
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     button: {
         width: "39%",
