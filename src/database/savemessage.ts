@@ -3,7 +3,6 @@ import * as SQLite from 'expo-sqlite';
 export const save_messages = async(message:any) => {
     try{
         const db = await SQLite.openDatabaseAsync('SQLiteDB.db');//データベースの読み込み
-        console.log("save_messages:",message);
         await db.runAsync(`INSERT INTO messages 
                 (id, room_id, sender_id, type, content, created_at) 
                 VALUES (?, ?, ?, ?, ?, ?)`, 
