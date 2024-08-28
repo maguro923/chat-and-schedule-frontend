@@ -158,9 +158,9 @@ export default function ChatHome() {
           return (
             <SafeAreaView>
             <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Text style={{fontSize: 24, marginLeft: 20}}>チャット</Text>
-              <Icon name={"adduser"} size={24} style={{marginLeft: "auto",marginRight: 20}} onPress={() => dispatch(setAddFriend(true))} />
-              <Icon name={"pluscircleo"} size={24} style={{marginRight: 20}} onPress={() => dispatch(setAddRoom(true))} />
+              <Text style={{fontSize: 30, marginLeft: 20}}>チャット</Text>
+              <Icon name={"adduser"} size={30} style={{marginLeft: "auto",marginRight: 20}} onPress={() => dispatch(setAddFriend(true))} />
+              <Icon name={"pluscircleo"} size={30} style={{marginRight: 20}} onPress={() => dispatch(setAddRoom(true))} />
             </View>
             </SafeAreaView>
           );
@@ -171,9 +171,9 @@ export default function ChatHome() {
           return (
             <SafeAreaView>
             <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Icon name={"left"} size={24} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
-              <Text style={{marginLeft: 20,fontSize: 24}}>{route.params.roomname}</Text>
-              <Icon name={"adduser"} size={24} style={{marginLeft: "auto",marginRight: 20}} onPress={() => dispatch(setAddParticipant(true))} />
+              <Icon name={"left"} size={30} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
+              <Text style={{marginLeft: 20,fontSize: 30}}>{route.params.roomname}</Text>
+              <Icon name={"adduser"} size={30} style={{marginLeft: "auto", marginRight: 20}} onPress={() => dispatch(setAddParticipant(true))} />
             </View>
             </SafeAreaView>
           );
