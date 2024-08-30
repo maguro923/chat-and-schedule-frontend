@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {  KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {  KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
 import { setAddRoom } from '../redux/overlaySlice';
 import { AppDispatch, RootState } from '../redux/store';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Badge, CheckBox, Input } from '@rneui/themed';
 import { Button, ListItem,Input as BaseInput } from '@rneui/base'
 import { URL } from '../api/config';
-import { TextInput } from 'react-native-gesture-handler';
 import { sendWebSocketMessage } from '../redux/webSocketSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { addRoomInfo, addRoomParticipant } from '../redux/roomsInfoSlice';
