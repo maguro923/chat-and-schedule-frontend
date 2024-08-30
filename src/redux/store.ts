@@ -7,6 +7,7 @@ import roomsInfoSlice from "./roomsInfoSlice";
 import participantsInfoSlice from "./participantsInfoSlice";
 import messagesListSlice from "./messagesListSlice";
 import overlaySlice from "./overlaySlice";
+import scheduleSlice from "./scheduleSlice";
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +19,17 @@ export const store = configureStore({
     participantsinfo: participantsInfoSlice,
     messageslist: messagesListSlice,
     overlay: overlaySlice,
+    schedule: scheduleSlice,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false/*{
+        // Ignore these action types
+        ignoredActions: ['schedule/setSchedules'],
+        // Ignore these field paths in all actions
+        ignoredActionPaths: ['payload']
+      },*/
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

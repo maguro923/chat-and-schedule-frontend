@@ -2,6 +2,14 @@ import * as SQLite from 'expo-sqlite';
 
 export async function initializeDatabase (db:SQLite.SQLiteDatabase) {
     await db.execAsync(`
+        CREATE TABLE IF NOT EXISTS schedules (
+            id CHAR(36) PRIMARY KEY,
+            text TEXT NOT NULL,
+            info TEXT,
+            color TEXT NOT NULL,
+            fromAt TEXT NOT NULL,
+            toAt TEXT NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS messages (
             id CHAR(36) PRIMARY KEY,
             room_id CHAR(36) NOT NULL,
