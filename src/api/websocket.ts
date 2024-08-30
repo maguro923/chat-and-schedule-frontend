@@ -9,6 +9,7 @@ import { addFriend, addParticipantsInfo, setFriendRequests, setParticipantsInfo 
 import { addRoomInfo, addRoomParticipant, deleteRoomParticipant, RoomsInfoInterface, setRoomsInfo } from '../redux/roomsInfoSlice';
 import AddRoomScreen from '../screens/addroom';
 import { save_messages } from '../database/savemessage';
+import { sendWebSocketMessage } from '../redux/webSocketSlice';
 
 const url = 'wss://api.chat-and-schedule.com/ws/';
 
@@ -50,6 +51,19 @@ class WebSocketService {
         });
         //受信したメッセージをstoreに保存
         this.messageHandlers.set("ReceiveMessage", async(message: any) => {
+            const recvFocus = async(roomid:string) => {
+                const result0 = await store.dispatch(sendWebSocketMessage({"type":"UnFocus","content":{"roomid":roomid}}));
+                const response0:any = unwrapResult(result0);
+                if (response0.content?.message !== "Already unfocused" && response0.content?.message !== "Unfocused"){
+                  console.error("アンフォーカスに失敗しました",response0.content?.message);
+                }
+                const result1 = await store.dispatch(sendWebSocketMessage({"type":"Focus","content":{"roomid":roomid}}));
+                const response1:any = unwrapResult(result1);
+                if (response1.content?.message !== "Already focused" && response1.content?.message !== "Focused"){
+                  console.error("フォーカスに失敗しました",response1.content?.message);
+                }
+            }
+            console.log("ReceiveMessage:", message);
             var receive_message: MessageInterface[] = [];
             if (message.content.type === "text") {
                 receive_message.push({
@@ -76,20 +90,12 @@ class WebSocketService {
             msg[message.content.roomid] = receive_message;
             if (store.getState().roomsinfo.roomsInfo.focusRoom === message.content.roomid) {
                 //送信先ルームにフォーカスしている場合
+                console.log("フォーカスしているルームにメッセージを受信しました",message.content);
                 store.dispatch(setMessages(msg));
                 save_messages(message.content);
                 //既読時間を更新することで突然の切断に対応する
                 const roomid = message.content.roomid
-                const result0 = await this.sendRequest({"type":"UnFocus","content":{"roomid":roomid}});
-                const response0:any = unwrapResult(result0);
-                if (response0.content?.message !== "Already unfocused" && response0.content?.message !== "Unfocused"){
-                  console.error("アンフォーカスに失敗しました",response0.content?.message);
-                }
-                const result1 = await this.sendRequest({"type":"Focus","content":{"roomid":roomid}});
-                const response1:any = unwrapResult(result1);
-                if (response1.content?.message !== "Already focused" && response1.content?.message !== "Focused"){
-                  console.error("フォーカスに失敗しました",response1.content?.message);
-                }
+                recvFocus(roomid);
             }else{
                 //送信先ルームにフォーカスしていない場合
                 store.dispatch(setLatestMessages(msg));
@@ -97,11 +103,12 @@ class WebSocketService {
         });
         //アクセストークンの再発行及び再認証
         this.messageHandlers.set("AuthInfo", async(message: any) => {
+            console.log("AuthInfo:", message);
             const send_reauth = async(Res:any,Device_id:any) => {
-                const result = await this.sendRequest({
+                const result = await store.dispatch(sendWebSocketMessage({
                     "type": "ReAuth", "content": {
-                        "access_token": Res.access_token, "device_id": Device_id} });
-                const response = unwrapResult(result)
+                        "access_token": Res.access_token, "device_id": Device_id} }));
+                const response:any = unwrapResult(result)
                 console.log("ReAuth:", response.content);
             }
             const userdata = store.getState().userdata.userdata;
@@ -152,7 +159,7 @@ class WebSocketService {
         });
         //フレンド関係成立に対する処理
         this.messageHandlers.set("Friend", async(message: any) => {
-            console.log("Friend:", message);
+            //console.log("Friend:", message);
             const participants = store.getState().participantsinfo
             const participants_id:string[] = []
             for (let id in participants.participants){
@@ -176,6 +183,7 @@ class WebSocketService {
         });
         //ルーム参加に対する処理
         this.messageHandlers.set("JoinRoom", async(message: any) => {
+            //console.log("JoinRoom:", message);
             const participants = store.getState().participantsinfo.participants
             store.dispatch(addRoomInfo({
                 "id":message.content.id,
@@ -215,7 +223,7 @@ class WebSocketService {
             console.log("reply-UnFriend:", response);
         });
         this.replyHandlers.set("reply-Focus", (response: any) => {});
-        this.replyHandlers.set("reply-UnFocus", (response: any) => {});
+        this.replyHandlers.set("reply-UnFocus", (response: any) => {console.log("reply-UnFocus:", response);});
         this.replyHandlers.set("reply-JoinRoom", (response: any) => {});
         this.replyHandlers.set("reply-LeaveRoom", (response: any) => {});
         this.replyHandlers.set("reply-CreateRoom", (response: any) => {});
@@ -253,6 +261,7 @@ class WebSocketService {
                 
                 //メッセージ受信
                 } else {
+                    console.log("DEV:",user_id, response);
                     if (requestId && this.pendingRequests.has(requestId)) {
                         this.pendingRequests.get(requestId)!(response);
                         this.pendingRequests.delete(requestId);
@@ -280,9 +289,10 @@ class WebSocketService {
     sendRequest(data: any): Promise<any> {
         const requestId = Crypto.randomUUID();
         data.id = requestId;
+        const is_connected_ws:boolean = store.getState().webSocket.isConnected;
 
         return new Promise((resolve, reject) => {
-            if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+            if (this.socket && this.socket.readyState === WebSocket.OPEN && is_connected_ws) {
                 this.pendingRequests.set(requestId, (response) => {
                     if (response.type && this.replyHandlers.has(response.type)) {
                         this.replyHandlers.get(response.type)!(response);
