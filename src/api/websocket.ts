@@ -223,7 +223,7 @@ class WebSocketService {
             console.log("reply-UnFriend:", response);
         });
         this.replyHandlers.set("reply-Focus", (response: any) => {});
-        this.replyHandlers.set("reply-UnFocus", (response: any) => {console.log("reply-UnFocus:", response);});
+        this.replyHandlers.set("reply-UnFocus", (response: any) => {});
         this.replyHandlers.set("reply-JoinRoom", (response: any) => {});
         this.replyHandlers.set("reply-LeaveRoom", (response: any) => {});
         this.replyHandlers.set("reply-CreateRoom", (response: any) => {});
@@ -261,7 +261,7 @@ class WebSocketService {
                 
                 //メッセージ受信
                 } else {
-                    console.log("DEV:",user_id, response);
+                    //console.log("DEV:",user_id, response);
                     if (requestId && this.pendingRequests.has(requestId)) {
                         this.pendingRequests.get(requestId)!(response);
                         this.pendingRequests.delete(requestId);
