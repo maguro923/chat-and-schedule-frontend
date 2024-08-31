@@ -116,26 +116,24 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
       ))}
       </ScrollView>
       }
-      <Overlay isVisible={is_RoomSetting} overlayStyle={{width: "70%", height: "25%"}}
+      <Overlay isVisible={is_RoomSetting} overlayStyle={{width: "70%", height: "30%"}}
       onBackdropPress={() => {
         setIs_RoomSetting(false);
       }}>
-      <View style={styles.header}>
-          <Text style={{fontSize:24,fontWeight:"bold"}}>{longPressName}</Text>
-      </View>
-      <View>
-        <Text style={{fontSize:16,marginTop:10,marginBottom:6}}>このルームから退出しますか？</Text>
-        <Text style={{fontSize:16}}>参加者があなただけの場合</Text>
-        <Text style={{fontSize:16}}>ルームは削除されます</Text>
-      </View>
-      <View style={{flex:1,flexDirection:"row"}}>
-        <View style={{margin:10,flex:1,justifyContent:"center",alignItems:"center"}}>
-          <Pressable onPress={() => setIs_RoomSetting(false)}>
-          <Text style={{padding:12,paddingHorizontal:30}}>戻る</Text></Pressable></View>
-        <View style={{margin:10,flex:1,marginLeft:0,justifyContent:"center",alignItems:"center"}}>
-          <Pressable onPress={() => send_LeaveRoomRequest()}>
-          <Text style={{padding:12,paddingHorizontal:30}}>退出</Text></Pressable></View>
-      </View>
+        <View style={styles.header}>
+            <Text style={{fontSize:24,fontWeight:"bold"}}>{longPressName}</Text>
+        </View>
+        <View>
+          <Text style={{fontSize:16,marginTop:10,marginBottom:6}}>このルームから退出しますか？</Text>
+          <Text style={{fontSize:16}}>参加者があなただけの場合</Text>
+          <Text style={{fontSize:16}}>ルームは削除されます</Text>
+        </View>
+        <View style={{flex:1,flexDirection:"row"}}>
+          <Pressable style={{margin:10,flex:1,justifyContent:"center",alignItems:"center"}} onPress={() => setIs_RoomSetting(false)}>
+            <Text style={{padding:12,paddingHorizontal:30}}>戻る</Text></Pressable>
+          <Pressable style={{margin:10,flex:1,marginLeft:0,justifyContent:"center",alignItems:"center"}} onPress={() => send_LeaveRoomRequest()}>
+            <Text style={{padding:12,paddingHorizontal:30}}>退出</Text></Pressable>
+        </View>
       </Overlay>
       <Overlay isVisible={addFriend} overlayStyle={{width: "90%", height: "70%"}}
       onBackdropPress={() => dispatch(setAddFriend(false))}>
