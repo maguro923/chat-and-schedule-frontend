@@ -61,7 +61,7 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
     for (let room  of rooms_info) {
       RoomsList.push({id: room.id, name: room.name, avatar_path: room.avatar_path,
         message: !latest_msg_keys.includes(room.id) || (latest_message[room.id].content==="" || latest_message[room.id].content===undefined) ? "メッセージはありません": latest_message[room.id].content
-        , latest_at:!latest_msg_keys.includes(room.id) || (latest_message[room.id].content==="" || latest_message[room.id].content===undefined)?"":latest_message[room.id].latest_at});
+        , latest_at:!latest_msg_keys.includes(room.id) || (latest_message[room.id].content==="" || latest_message[room.id].content===undefined) ? rooms_info.filter(r => r.id === room.id)[0].joined_at : latest_message[room.id].latest_at});
     }
       setRoomList((prevList)=>{
         const updatedList = [...RoomsList];

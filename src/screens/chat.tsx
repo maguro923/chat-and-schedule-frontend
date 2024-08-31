@@ -21,6 +21,7 @@ import { setFocusRoom } from '../redux/roomsInfoSlice';
 import { setAddParticipant } from '../redux/overlaySlice';
 import { Overlay } from '@rneui/themed';
 import AddParticipantScreen from './addparticipant';
+import { save_messages } from '../database/savemessage';
 
 // カスタムアバター
 const CustomAvatar = (props: any) => {
@@ -189,11 +190,6 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
       created_at: format(newMessages[0].createdAt, "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'}),
     };
     dispatch(setSendMessage({roomid: route.params.roomid, message: message}));
-    await db.runAsync(`INSERT INTO messages 
-            (id, room_id, sender_id, type, content, created_at) 
-            VALUES (?, ?, ?, ?, ?, ?)`, 
-          [message.id, route.params.roomid, message.sender_id, message.type, message.content, 
-            format(new Date(), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})]);
     const result = await dispatch(sendWebSocketMessage({"type":"SendMessage","content":{
       "roomid": route.params.roomid,
       "type": "text",
@@ -202,6 +198,16 @@ export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
     const response:any = unwrapResult(result);
     if (response.content?.message === "Message sent"){
       console.log("メッセージを送信しました");
+      //送信したメッセージを追加
+      const sended_message = {
+        id: message.id,
+        roomid: route.params.roomid,
+        senderid: message.sender_id,
+        type: message.type,
+        text: message.content,
+        created_at: format(new Date(), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})
+      }
+      save_messages(sended_message);
       //既読時間を更新することで突然の切断に対応する
       const roomid = route.params.roomid;
       const result0 = await dispatch(sendWebSocketMessage({"type":"UnFocus","content":{"roomid":roomid}}));
