@@ -1,6 +1,5 @@
 import * as Crypto from 'expo-crypto';
 import { setLatestMessages ,MessagesListInterface, MessageInterface, setMessages } from '../redux/messagesListSlice';
-import { store } from '../redux/store';//循環インポートとなるが、storeを使うために必要なので無視
 import { get_usersinfo, refresh, RefreshJsonInterface } from './api';
 import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 import { setErrorMessage } from '../redux/authErrorSlice';
@@ -9,7 +8,11 @@ import { addFriend, addParticipantsInfo, setFriendRequests, setParticipantsInfo 
 import { addRoomInfo, addRoomParticipant, deleteRoomParticipant, RoomsInfoInterface, setRoomsInfo } from '../redux/roomsInfoSlice';
 import AddRoomScreen from '../screens/addroom';
 import { save_messages } from '../database/savemessage';
+//------------------------------------------------------------------------
+//循環インポートとなるが、storeを使うために必要なので無視
 import { sendWebSocketMessage } from '../redux/webSocketSlice';
+import { store } from '../redux/store';
+//------------------------------------------------------------------------
 
 const url = 'wss://api.chat-and-schedule.com/ws/';
 
