@@ -104,7 +104,7 @@ export default function ScheduleHome() {
 
   return (
     <View style={{backgroundColor:"white",height:"100%",justifyContent:"space-around"}}>
-      <View style={{height:isDisplayCalendar?'100%':'30%'}}>
+      <View style={{height:isDisplayCalendar?'auto':'30%'}}>
         <ScrollView>
         <CalendarList
           style={{height:"auto",backgroundColor:"white"}}
@@ -124,15 +124,15 @@ export default function ScheduleHome() {
                           setIsDisplayCalendar={setIsDisplayCalendar} />}
         />
         {isDisplayCalendar?
-        <Pressable style={{position:"absolute",bottom:0}} onPress={() => setIsDisplayCalendar(false)}>
+        <Pressable style={{}} onPress={() => setIsDisplayCalendar(false)}>
           <Text style={{
-            backgroundColor:"whitesmoke",fontSize:20,marginBottom:10,marginHorizontal:10,flexGrow:1}}>予定表を開く</Text>
+            backgroundColor:"whitesmoke",fontSize:20,marginBottom:10,marginHorizontal:10,width:150,textAlign:'center'}}>予定表を開く</Text>
         </Pressable>:<></>}
         </ScrollView>
       </View>
       {isDisplayCalendar?<></>:
       <Pressable onPress={() => setIsDisplayCalendar(true)}>
-        <Text style={{backgroundColor:"whitesmoke",position:"absolute",bottom:0,fontSize:20}}>カレンダーを開く
+        <Text style={{backgroundColor:"whitesmoke",position:"absolute",bottom:0,fontSize:20,width:180,textAlign:'center'}}>予定表を閉じる
         </Text>
       </Pressable>}
       <>
