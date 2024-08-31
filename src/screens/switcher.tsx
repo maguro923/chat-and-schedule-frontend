@@ -20,6 +20,12 @@ import { addRoomParticipant, RoomsInfoInterface, setRoomsInfo } from '../redux/r
 import { unwrapResult } from '@reduxjs/toolkit';
 import { setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
 import { loadMessages } from '../database/loadmessages';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { View } from 'react-native';
+import { Avatar } from '@rneui/themed';
+import { URL } from '../api/config';
+import { COLORS, Schedule, setSchedules } from '../redux/scheduleSlice';
+import { setAddSchedule } from '../redux/overlaySlice';
 
 const Tab = createBottomTabNavigator();
 
@@ -81,7 +87,8 @@ function HomeScreen() {
           const response:any = unwrapResult(result);
           if (response.content?.participants !== undefined && response.content?.participants !== null &&
               response.content?.roomlist !== undefined && response.content?.roomlist !== null) {
-                //DEV: console.log("ルーム情報を取得しました",response.content);
+                //DEV: 
+                console.log("ルーム情報を取得しました",response.content);
                 dispatch(setRoomsInfo(response.content.roomlist as RoomsInfoInterface[]));
                 //ルーム参加者一覧のリストを抽出
                 let roomidlist:string[] = [];
@@ -196,14 +203,24 @@ function HomeScreen() {
 
   return (
     <NavigationContainer>
-        <Tab.Navigator screenOptions={{headerShown: false}}>
-            <Tab.Screen name="ホーム" component={ScheduleHome} options={{
+        <Tab.Navigator >
+            <Tab.Screen name="ホーム" component={ScheduleHome} options={({route}) => ({
               tabBarIcon:({focused})=> <Icon name="home" size={24} color={focused?"#007AFF":"gray"}/>,
-            }}/>
+              headerStyle: {backgroundColor: 'whitesmoke'},
+              headerTitleStyle:{fontSize:30},
+              headerRight: () => (
+                <View style={{marginRight:12,flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <Icon name="pluscircleo" size={30} onPress={() => dispatch(setAddSchedule(true))} />
+                  <Avatar rounded size={36} source={{uri:URL+userdata.userdata.avatar_path}} 
+                  containerStyle={{backgroundColor:"gray",marginLeft:24}} onPress={() => console.log("user press")}/>
+                </View>
+              ),
+            })}/>
             <Tab.Screen name="チャット" component={ChatHome} options={({route}) => ({
               tabBarBadge: count===0 ? undefined : count,
               tabBarIcon:({focused})=> <Icon name="message1" size={24} color={focused?"#007AFF":"gray"} />,
-              tabBarStyle:{display: getTabBarVisibility(route)?"flex":"none"}
+              tabBarStyle:{display: getTabBarVisibility(route)?"flex":"none"},
+              headerShown: false
             })}/>
         </Tab.Navigator>
     </NavigationContainer>
