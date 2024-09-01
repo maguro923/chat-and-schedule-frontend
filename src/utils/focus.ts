@@ -13,7 +13,7 @@ interface MessageInterface {
 
 export function focusChatRoom(db:SQLiteDatabase, dispatch:AppDispatch, roomid:string, new_messages:MessagesListInterface|undefined) {
     const setMessages = async(message:MessageInterface) => {
-        console.log("set_latest_messages:",message);
+        //console.log("set_latest_messages:",message);
         try{
             await db.runAsync(`INSERT INTO messages 
                 (id, room_id, sender_id, type, content, created_at) 
