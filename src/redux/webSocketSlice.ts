@@ -23,6 +23,7 @@ export const connectWebSocket = createAsyncThunk<void, { user_id: string; header
             })
             .catch((error) => {
                 dispatch(setError('WebSocket connection error: ' + error));
+                dispatch(connectionClosed());
             });
     }
 );
@@ -55,6 +56,9 @@ const webSocketSlice = createSlice({
         connectionClosed(state) {
             state.isConnected = false;
         },
+        setIsConnected(state, action: PayloadAction<boolean>) {
+            state.isConnected = action.payload;
+        },
         receiveMessage(state, action: PayloadAction<any>) {
             state.latestMessage = action.payload;
         },
@@ -69,6 +73,7 @@ export const {
     connectionClosed,
     receiveMessage,
     setError,
+    setIsConnected,
 } = webSocketSlice.actions;
 
 export default webSocketSlice.reducer;

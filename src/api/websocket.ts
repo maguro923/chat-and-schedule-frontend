@@ -10,7 +10,7 @@ import AddRoomScreen from '../screens/addroom';
 import { save_messages } from '../database/savemessage';
 //------------------------------------------------------------------------
 //循環インポートとなるが、storeを使うために必要なので無視
-import { sendWebSocketMessage } from '../redux/webSocketSlice';
+import { connectWebSocket, sendWebSocketMessage, setIsConnected } from '../redux/webSocketSlice';
 import { store } from '../redux/store';
 //------------------------------------------------------------------------
 
@@ -25,6 +25,8 @@ class WebSocketService {
     private pendingRequests: Map<string, (response: any) => void> = new Map();
     private messageHandlers: Map<string, MessageHandler> = new Map();
     private replyHandlers: Map<string, ReplyHandler> = new Map();
+    private userid: string = "";
+    private headers: { [key: string]: string } = {};
     
     constructor() {
         //受信した最新メッセージをstoreに保存
@@ -239,6 +241,8 @@ class WebSocketService {
         return new Promise((resolve, reject) => {
             const ws_url = new URL(url + user_id);
             this.socket = new WebSocket(ws_url.toString());
+            this.userid = user_id;
+            this.headers = headers;
 
             //初回接続時認証情報を送信
             this.socket.onopen = () => {
@@ -275,7 +279,8 @@ class WebSocketService {
             };
 
             this.socket.onclose = () => {
-                console.log("WebSocket connection closed.");
+                console.warn("WebSocket connection closed. trying to reconnect...");
+                this.connect(user_id, headers);
             };
         });
     }
@@ -289,13 +294,29 @@ class WebSocketService {
         }
     }
 
-    sendRequest(data: any): Promise<any> {
+    sendRequest(data: any,retry: boolean = false): Promise<any> {
         const requestId = Crypto.randomUUID();
         data.id = requestId;
-        const is_connected_ws:boolean = store.getState().webSocket.isConnected;
+        if (store.getState().webSocket.isConnected === (this.socket?.readyState === WebSocket.OPEN)) {
+            store.dispatch(setIsConnected(this.socket?.readyState === WebSocket.OPEN));
+        }
 
         return new Promise((resolve, reject) => {
-            if (this.socket && this.socket.readyState === WebSocket.OPEN && is_connected_ws) {
+            // 通信が切断されている場合は一度だけ再接続を試みる
+            const Retry = async(send_data: any) => {
+                console.log("Retry connection and sending message...");
+                this.disconnect();
+                await store.dispatch(connectWebSocket({ user_id: this.userid, headers: this.headers }))
+                .catch((error) => {
+                    console.error("WebSocket connection error: " + error);
+                    reject(error);
+                });
+                const result = await store.dispatch(sendWebSocketMessage(send_data));
+                const response:any = unwrapResult(result);
+                resolve(response);
+            }
+
+            if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                 this.pendingRequests.set(requestId, (response) => {
                     if (response.type && this.replyHandlers.has(response.type)) {
                         this.replyHandlers.get(response.type)!(response);
@@ -314,7 +335,13 @@ class WebSocketService {
                     }
                 }, 5000);
             } else {
-                reject(new Error("WebSocket is not connected"));
+                if (retry) {
+                    //リトライ時にエラーが発生した場合はエラーを返す
+                    console.error("We try to reconnect and send message, but connection is not established.");
+                    reject(new Error("WebSocket is not connected"));
+                } else {
+                    Retry(data);
+                }
             }
         });
     }
