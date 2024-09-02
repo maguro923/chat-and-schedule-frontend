@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getFocusedRouteNameFromRoute, NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ScheduleHome from './../screens/schedulehome';
 import ChatHome from './../screens/chathome';
 import 'react-native-gesture-handler';
-import {SQLiteProvider, useSQLiteContext} from 'expo-sqlite/next';
+import { useSQLiteContext} from 'expo-sqlite/next';
 import Login from './login';
 import * as SecureStore from 'expo-secure-store';
 import { useBooleanContext, BooleanProvider } from '../context/LoginStatusContext';
@@ -20,11 +20,9 @@ import { addRoomParticipant, RoomsInfoInterface, setRoomsInfo } from '../redux/r
 import { unwrapResult } from '@reduxjs/toolkit';
 import { setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
 import { loadMessages } from '../database/loadmessages';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { View } from 'react-native';
 import { Avatar } from '@rneui/themed';
 import { URL } from '../api/config';
-import { COLORS, Schedule, setSchedules } from '../redux/scheduleSlice';
 import { setAddSchedule } from '../redux/overlaySlice';
 
 const Tab = createBottomTabNavigator();

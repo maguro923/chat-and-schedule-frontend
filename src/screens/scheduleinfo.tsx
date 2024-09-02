@@ -1,19 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {  KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Alert } from 'react-native';
-import { setAddRoom, setEditSchedule } from '../redux/overlaySlice';
+import { setEditSchedule } from '../redux/overlaySlice';
 import { AppDispatch, RootState } from '../redux/store';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
-import { Avatar, Badge, CheckBox, Input } from '@rneui/themed';
-import { Button, ListItem,Input as BaseInput } from '@rneui/base'
+import { Avatar } from '@rneui/themed';
+import { Button } from '@rneui/base'
 import { URL } from '../api/config';
-import { sendWebSocketMessage } from '../redux/webSocketSlice';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { addRoomInfo, addRoomParticipant } from '../redux/roomsInfoSlice';
 import { format } from 'date-fns-tz';
 import { changeSchedule, COLORS, Schedule } from '../redux/scheduleSlice';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import * as Crypto from 'expo-crypto';
 import { update_schedule } from '../database/updateschedule';
 
 export default function EditScheduleScreen() {
