@@ -20,7 +20,7 @@ export function focusChatRoom(db:SQLiteDatabase, dispatch:AppDispatch, roomid:st
                 VALUES (?, ?, ?, ?, ?, ?)`, 
                 [message.id, message.room_id, message.sender_id, message.type, message.content, message.created_at]);
         }catch(err){
-            console.log('ERROR:',err);
+            console.error('ERROR:',err);
         }
     };
     if (new_messages!==undefined && roomid in new_messages){
