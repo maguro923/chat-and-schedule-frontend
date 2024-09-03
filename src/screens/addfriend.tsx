@@ -113,7 +113,8 @@ export default function AddFriendScreen() {
             <Text>IDもしくはユーザー名で検索してみましょう</Text></View>
             :
         //フレンドリクエストがある場合
-            participants.friend_requests.map((user) => (
+            <ScrollView>
+            {participants.friend_requests.map((user) => (
             <ListItem key={user} >
                 <Avatar rounded size={50} source={{uri:URL+participants.participants[user].avatar_path}} containerStyle={{backgroundColor:"gray"}} />
                 <ListItem.Content>
@@ -123,7 +124,8 @@ export default function AddFriendScreen() {
                     accept_FriendRequest(user);
                 }}>フレンド申請受理</Button>
             </ListItem>
-            )):
+            ))}
+            </ScrollView>:
         //ID検索のIDミスの場合
         searchText[0] === "#" && CheckUUID(searchText.slice(1))===false?<></>
         :

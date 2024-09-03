@@ -72,6 +72,7 @@ export default function AddParticipantScreen(props: {id: string}) {
             <Icon name="close" size={32} color="black" style={{width:"10%",marginLeft:"auto"}} 
             onPress={() => dispatch(setAddParticipant(false))}/>
         </View>
+        <ScrollView>
         {friend_list.length===0?
         //ユーザーが見つからない場合
         <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
@@ -94,6 +95,7 @@ export default function AddParticipantScreen(props: {id: string}) {
         </ListItem>
         ))}
         </View>}
+        </ScrollView>
         <Button onPress={() => send_joinroomrequest()}
             disabled={select.length===0} >招待</Button>
         </>

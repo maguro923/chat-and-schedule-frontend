@@ -54,7 +54,7 @@ export default function AddRoomScreen() {
                         </View>
                         :
                         //ユーザーリスト表示
-                        <View style={{flex:1}}>
+                        <ScrollView style={{flex:1}}>
                         {friend_list.map((friend_id) => (
                         <ListItem key={friend_id} onPress={()=>toggle_is_select(friend_id)} >
                             <Avatar rounded size={50} source={{uri:URL+participants[friend_id].avatar_path}} containerStyle={{backgroundColor:"gray"}} />
@@ -66,7 +66,7 @@ export default function AddRoomScreen() {
                             uncheckedIcon="circle-o" />
                         </ListItem>
                         ))}
-                        </View>}
+                        </ScrollView>}
                     <Button title="次へ" containerStyle={{width:"90%",alignSelf:"center",marginTop:16}} onPress={()=>next_screen()}/>
                     </>
             )
