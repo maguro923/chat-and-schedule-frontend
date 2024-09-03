@@ -110,7 +110,7 @@ const handleLongPress = (context:any, message:any) => {
 };
 
 
-export default function Chat({route}: RootStackScreenProps<'ChatScreen'>) {
+export default function ChatScreen({route}: RootStackScreenProps<'ChatScreen'>) {
   const dispatch: AppDispatch = useDispatch();
   const db = useSQLiteContext();
   const [messages, setMessages] = useState<IMessage[]>([]); // メッセージリスト
