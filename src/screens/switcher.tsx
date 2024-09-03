@@ -188,7 +188,8 @@ function HomeScreen() {
   },[]);
 
   function getTabBarVisibility(route: any) {
-    if (getFocusedRouteNameFromRoute(route) === "ChatScreen" ?? "") {
+    console.log(getFocusedRouteNameFromRoute(route));
+    if (getFocusedRouteNameFromRoute(route) === "ChatScreen" || getFocusedRouteNameFromRoute(route) === "RoomInfoScreen") {
       return false;
     }
     return true;
@@ -220,6 +221,7 @@ function HomeScreen() {
               headerStyle: {backgroundColor: 'whitesmoke'},
               headerTitleStyle:{fontSize:30},
               headerShown: getHeaderVisibility(route),
+              tabBarStyle:{display: getHeaderVisibility(route)?"flex":"none"},
               headerRight: (props) => (
                 <View style={{marginRight:12,flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                   <Icon name="pluscircleo" size={30} onPress={() => dispatch(setAddSchedule(true))} />

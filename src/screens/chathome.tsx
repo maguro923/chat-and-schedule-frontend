@@ -23,10 +23,12 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { deleteRoominfo } from '../redux/roomsInfoSlice';
 import { delete_messages } from '../database/deletemessages';
 import { focusMessages } from '../redux/messagesListSlice';
+import RoomInfoScreen from './roominfosetting';
 
 type RootStackParamList = {
   ChatHomeScreen: undefined;
   ChatScreen: { roomid: string, roomname: string };
+  RoomInfoScreen: { info: { roomid: string, roomname: string } };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -172,6 +174,19 @@ export default function ChatHome() {
               <Icon name={"left"} size={30} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
               <Text style={{marginLeft: 20,fontSize: 30}}>{route.params.roomname}</Text>
               <Icon name={"adduser"} size={30} style={{marginLeft: "auto", marginRight: 20}} onPress={() => dispatch(setAddParticipant(true))} />
+              <Icon name={"setting"} size={30} style={{marginRight: 20}} onPress={() => props.navigation.navigate("RoomInfoScreen",{info: props.route.params})} />
+            </View>
+            </SafeAreaView>
+          );
+        }
+      })}/>
+      <Stack.Screen name="RoomInfoScreen" component={RoomInfoScreen} options={({route}) => ({
+        header(props) {
+          return (
+            <SafeAreaView>
+            <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Icon name={"left"} size={30} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
+              <Text style={{marginLeft: 20,fontSize: 30,marginRight:"auto"}}>ルーム情報</Text>
             </View>
             </SafeAreaView>
           );
