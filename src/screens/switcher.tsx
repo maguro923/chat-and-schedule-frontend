@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getFocusedRouteNameFromRoute, NavigationContainer } from "@react-navigation/native";
+import { getFocusedRouteNameFromRoute, NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ScheduleHome from './../screens/schedulehome';
 import ChatHome from './../screens/chathome';
@@ -25,7 +25,12 @@ import { Avatar } from '@rneui/themed';
 import { URL } from '../api/config';
 import { setAddSchedule } from '../redux/overlaySlice';
 
-const Tab = createBottomTabNavigator();
+type RootTabParamList = {
+  ホーム: undefined;
+  チャット: undefined;
+};
+
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 function HomeScreen() {
   const db = useSQLiteContext();
@@ -189,6 +194,13 @@ function HomeScreen() {
     return true;
   }
 
+  function getHeaderVisibility(route: any) {
+    if (getFocusedRouteNameFromRoute(route) === "ユーザー設定") {
+      return false;
+    }
+    return true;
+  }
+
   const message = useSelector((state: RootState) => state.messageslist.new_messages);
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -199,18 +211,20 @@ function HomeScreen() {
     setCount(new_count);
   },[message]);
 
+  const navigation:any = useNavigation();
+
   return (
-    <NavigationContainer>
         <Tab.Navigator >
             <Tab.Screen name="ホーム" component={ScheduleHome} options={({route}) => ({
               tabBarIcon:({focused})=> <Icon name="home" size={24} color={focused?"#007AFF":"gray"}/>,
               headerStyle: {backgroundColor: 'whitesmoke'},
               headerTitleStyle:{fontSize:30},
-              headerRight: () => (
+              headerShown: getHeaderVisibility(route),
+              headerRight: (props) => (
                 <View style={{marginRight:12,flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                   <Icon name="pluscircleo" size={30} onPress={() => dispatch(setAddSchedule(true))} />
                   <Avatar rounded size={36} source={{uri:URL+userdata.userdata.avatar_path}} 
-                  containerStyle={{backgroundColor:"gray",marginLeft:24}} onPress={() => console.log("user press")}/>
+                  containerStyle={{backgroundColor:"gray",marginLeft:24}} onPress={() => navigation.navigate("ホーム",{screen:"ユーザー設定"})}/>
                 </View>
               ),
             })}/>
@@ -221,7 +235,6 @@ function HomeScreen() {
               headerShown: false
             })}/>
         </Tab.Navigator>
-    </NavigationContainer>
   );
 }
 
@@ -249,7 +262,11 @@ export default function Switcher () {
     return true;
   }
   if(CheckUser() && value) {
-    return <HomeScreen />;
+    return (
+      <NavigationContainer>
+        <HomeScreen />
+      </NavigationContainer>
+    );
   }   
   return <Login />;
 }

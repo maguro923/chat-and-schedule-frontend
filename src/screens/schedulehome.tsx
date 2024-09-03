@@ -18,6 +18,8 @@ import { loadSchedules } from '../database/loadschedules';
 import { useSQLiteContext } from 'expo-sqlite';
 import { delete_schedule } from '../database/deleteschedule';
 import EditScheduleScreen from './scheduleinfo';
+import { createStackNavigator } from '@react-navigation/stack';
+import UesrInfoScreen from './userinfosetting';
 
 //日本語化
 LocaleConfig.locales.jp = {
@@ -28,7 +30,14 @@ LocaleConfig.locales.jp = {
 };
 LocaleConfig.defaultLocale = 'jp';
 
-export default function ScheduleHome() {
+type RootStackParamList = {
+  ScheduleHomeScreen: undefined;
+  ユーザー設定: undefined;
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
+
+export function ScheduleHomeScreen() {
   const schedule = useSelector((state: RootState) => state.schedule.schedule);
   const dispatch: AppDispatch = useDispatch();
   const db = useSQLiteContext();
@@ -172,16 +181,17 @@ export default function ScheduleHome() {
     </View>
   );
 }
-/*        <>
-        {schedule.map((plan) => (
-          <ListItem key={plan.id} onPress={() => console.log()} onLongPress={()=>console.log()}>
-            <ListItem.Content>
-              <ListItem.Title numberOfLines={1} style={{fontSize:24}}>{plan.text}</ListItem.Title>
-              <ListItem.Subtitle numberOfLines={1}>{plan.info}</ListItem.Subtitle>
-            </ListItem.Content>
-          </ListItem>
-        ))}
-        </>*/
+
+export default function ScheduleHome() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="ScheduleHomeScreen" component={ScheduleHomeScreen} options={{
+        headerShown: false,
+      }} />
+      <Stack.Screen name="ユーザー設定" component={UesrInfoScreen} options={{}} />
+    </Stack.Navigator>
+  );
+}
 
 const styles = StyleSheet.create({
     container: {
