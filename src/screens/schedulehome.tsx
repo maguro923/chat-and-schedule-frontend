@@ -20,6 +20,7 @@ import { delete_schedule } from '../database/deleteschedule';
 import EditScheduleScreen from './scheduleinfo';
 import { createStackNavigator } from '@react-navigation/stack';
 import UesrInfoScreen from './userinfosetting';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 //日本語化
 LocaleConfig.locales.jp = {
@@ -188,7 +189,18 @@ export default function ScheduleHome() {
       <Stack.Screen name="ScheduleHomeScreen" component={ScheduleHomeScreen} options={{
         headerShown: false,
       }} />
-      <Stack.Screen name="ユーザー設定" component={UesrInfoScreen} options={{}} />
+      <Stack.Screen name="ユーザー設定" component={UesrInfoScreen} options={({route}) => ({
+        header(props) {
+          return (
+            <SafeAreaView>
+            <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Icon name={"left"} size={30} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
+              <Text style={{marginLeft: 20,fontSize: 30,marginRight:"auto"}}>ユーザー情報</Text>
+            </View>
+            </SafeAreaView>
+          );
+        }
+      })} />
     </Stack.Navigator>
   );
 }
