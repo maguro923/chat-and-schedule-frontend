@@ -188,7 +188,6 @@ function HomeScreen() {
   },[]);
 
   function getTabBarVisibility(route: any) {
-    console.log(getFocusedRouteNameFromRoute(route));
     if (getFocusedRouteNameFromRoute(route) === "ChatScreen" || getFocusedRouteNameFromRoute(route) === "RoomInfoScreen") {
       return false;
     }
