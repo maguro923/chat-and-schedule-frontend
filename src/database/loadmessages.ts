@@ -8,7 +8,6 @@ export const loadMessages = async(db:SQLiteDatabase,dispatch:AppDispatch ,roomid
         const res:any = await db.getAllAsync("SELECT * FROM messages WHERE room_id = ? ORDER BY created_at DESC LIMIT 1000",roomid)
         //console.log('RESULT IS:',res)
         if (res[0] === undefined || res[0] === null || res.length === 0){
-            console.log("メッセージがありません");
             continue;
         }
         var room_msg:MessageInterface[] = [];

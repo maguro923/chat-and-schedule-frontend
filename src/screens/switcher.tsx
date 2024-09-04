@@ -64,23 +64,27 @@ function HomeScreen() {
 
     //ルーム参加していないフレンドのIDを取得しユーザー情報取得リストに追加
     const GetFrinendList = async (participants: string[]) => {
-      const result = await dispatch(sendWebSocketMessage({"type":"GetFriendList","content":{}}))
-      const response:any = unwrapResult(result);
-      console.log("フレンドリストを取得しました",response);
-      for (let friend of response.content.friend) {
-        if(!participants.includes(friend)){
-          participants.push(friend);
+      try{
+        const result = await dispatch(sendWebSocketMessage({"type":"GetFriendList","content":{}}))
+        const response:any = unwrapResult(result);
+        console.log("フレンドリストを取得しました");
+        for (let friend of response.content.friend) {
+          if(!participants.includes(friend)){
+            participants.push(friend);
+          }
         }
-      }
-      for (let req of response.content.request) {
-        if(!participants.includes(req)){
-          participants.push(req);
+        for (let req of response.content.request) {
+          if(!participants.includes(req)){
+            participants.push(req);
+          }
         }
+        for (let request of response.content.request) {
+          dispatch(setFriendRequests(request));
+        }
+        GetUsersInfo(participants);
+      }catch(error){
+        console.error('フレンド情報取得時に不明なエラーが発生しました:', error);
       }
-      for (let request of response.content.request) {
-        dispatch(setFriendRequests(request));
-      }
-      GetUsersInfo(participants);
     }
 
     const get_roomsinfo = async () => {
@@ -91,7 +95,7 @@ function HomeScreen() {
           if (response.content?.participants !== undefined && response.content?.participants !== null &&
               response.content?.roomlist !== undefined && response.content?.roomlist !== null) {
                 //DEV: 
-                console.log("ルーム情報を取得しました",response.content);
+                console.log("ルーム情報を取得しました");
                 dispatch(setRoomsInfo(response.content.roomlist as RoomsInfoInterface[]));
                 //ルーム参加者一覧のリストを抽出
                 let roomidlist:string[] = [];
@@ -116,7 +120,7 @@ function HomeScreen() {
             console.error("ルーム情報の取得に失敗しました",response.content?.message);
           }
         } catch (error) {
-          console.error('Failed to send message:', error);
+          console.error('ルーム情報取得時に不明なエラーが発生しました', error);
         }
       }
     }
