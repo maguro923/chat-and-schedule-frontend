@@ -1,41 +1,29 @@
 import { SQLiteDatabase } from "expo-sqlite";
-import { focusMessages, MessagesListInterface } from "../redux/messagesListSlice";
+import { MessagesListInterface } from "../redux/messagesListSlice";
 import { AppDispatch } from "../redux/store";
-
-interface MessageInterface {
-    id: string;
-    room_id: string;
-    sender_id: string;
-    type: string;
-    content: string;
-    created_at: string;
-}
+import { save_messages, SaveMessageInterface } from "../database/savemessage";
 
 export function focusChatRoom(db:SQLiteDatabase, dispatch:AppDispatch, roomid:string, new_messages:MessagesListInterface|undefined) {
-    const setMessages = async(message:MessageInterface) => {
-        //console.log("set_latest_messages:",message);
-        try{
-            await db.runAsync(`INSERT INTO messages 
-                (id, room_id, sender_id, type, content, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?)`, 
-                [message.id, message.room_id, message.sender_id, message.type, message.content, message.created_at]);
-        }catch(err){
-            console.error('ERROR:',err);
-        }
-    };
     if (new_messages!==undefined && roomid in new_messages){
         for (const new_message of new_messages[roomid]){
-            const message:MessageInterface = {
+            let message:SaveMessageInterface = {
                 id: new_message.id,
-                room_id: roomid,
-                sender_id: new_message.sender_id,
+                roomid: roomid,
+                senderid: new_message.sender_id,
                 type: new_message.type,
-                content: new_message.content,
                 created_at: new_message.created_at
             };
-            setMessages(message);
+            if (new_message.type==="text"){
+                message.text = new_message.content;
+            }else{
+                message.message = new_message.content;
+            }
+            save_messages(message);
         }
     }
+    //[message.id, 
+    //message.roomid, message.senderid, 
+    //message.type, message.type==="text"?message.text:message.message, message.created_at]
     //const a = db.getAllSync("SELECT * FROM messages WHERE room_id = ? ORDER BY created_at DESC LIMIT 1000",roomid);
     //console.log('RESULT IS:',a);
 }
