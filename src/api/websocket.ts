@@ -2,11 +2,9 @@ import * as Crypto from 'expo-crypto';
 import { setLatestMessages ,MessagesListInterface, MessageInterface, setMessages } from '../redux/messagesListSlice';
 import { get_usersinfo, refresh, RefreshJsonInterface } from './api';
 import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
-import { setErrorMessage } from '../redux/authErrorSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { addFriend, addParticipantsInfo, setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
-import { addRoomInfo, addRoomParticipant, deleteRoomParticipant, RoomsInfoInterface, setRoomsInfo } from '../redux/roomsInfoSlice';
-import AddRoomScreen from '../screens/addroom';
+import { addRoomInfo, addRoomParticipant, deleteRoomParticipant } from '../redux/roomsInfoSlice';
 import { save_messages } from '../database/savemessage';
 //------------------------------------------------------------------------
 //循環インポートとなるが、storeを使うために必要なので無視

@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import {  KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Alert } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View, TextInput, Alert } from 'react-native';
 import { setEditSchedule } from '../redux/overlaySlice';
 import { AppDispatch, RootState } from '../redux/store';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
 import { Avatar } from '@rneui/themed';
 import { Button } from '@rneui/base'
-import { URL } from '../api/config';
 import { format } from 'date-fns-tz';
 import { changeSchedule, COLORS, Schedule } from '../redux/scheduleSlice';
 import DateTimePicker from 'react-native-modal-datetime-picker';

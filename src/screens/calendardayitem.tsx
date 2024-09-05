@@ -1,8 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
-import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { DateData } from 'react-native-calendars';
 import { DayProps } from 'react-native-calendars/src/calendar/day';
-import { ParticipantsInfoInterface, Schedule } from '../redux/scheduleSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 

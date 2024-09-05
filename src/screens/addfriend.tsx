@@ -1,24 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, ListItem, Input as BaseInput } from '@rneui/base'
-import { format } from 'date-fns-tz';
-import { set, sub } from 'date-fns';
-import * as Crypto from 'expo-crypto';
-import { Avatar, Badge, Input } from '@rneui/themed';
-import { createStackNavigator } from '@react-navigation/stack';
+import { Avatar } from '@rneui/themed';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { AppDispatch, RootState } from '../redux/store';
 import { setAddFriend } from '../redux/overlaySlice';
-import { createIconSetFromFontello } from 'react-native-vector-icons';
 import CheckUUID from '../utils/checkuuid';
 import { sendWebSocketMessage } from '../redux/webSocketSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { URL } from '../api/config';
-import { addFriend, setFriendRequests, setSendedRequests } from '../redux/participantsInfoSlice';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
-
+import { addFriend, setSendedRequests } from '../redux/participantsInfoSlice';
 interface UserListInterface {
     id: string;
     name: string;

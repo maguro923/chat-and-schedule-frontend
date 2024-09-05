@@ -1,16 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {  Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { setAddParticipant, setAddRoom, setAddSchedule } from '../redux/overlaySlice';
-import { AppDispatch, RootState } from '../redux/store';
+import React, { useRef, useState } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { setAddSchedule } from '../redux/overlaySlice';
+import { AppDispatch } from '../redux/store';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { useDispatch, useSelector } from 'react-redux';
-import { Avatar, Badge, CheckBox } from '@rneui/themed';
-import { Button, ListItem,Input as BaseInput, darkColors } from '@rneui/base'
-import { URL } from '../api/config';
-import { unwrapResult } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
+import { Avatar } from '@rneui/themed';
+import { Button,Input as BaseInput } from '@rneui/base'
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import { set } from 'date-fns';
-import { COLORS, setSchedule, setSchedules } from '../redux/scheduleSlice';
+import { COLORS, setSchedule } from '../redux/scheduleSlice';
 import * as Crypto from 'expo-crypto';
 import { format } from 'date-fns-tz';
 import { save_schedule } from '../database/saveschedule';

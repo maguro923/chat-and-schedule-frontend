@@ -1,5 +1,4 @@
 import { SQLiteDatabase } from "expo-sqlite";
-import { MessagesListInterface, setLocalMessages, MessageInterface, setLatestMessages } from "../redux/messagesListSlice";
 import { AppDispatch } from "../redux/store";
 import { Schedule, setSchedules } from "../redux/scheduleSlice";
 

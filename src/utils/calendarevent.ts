@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 //import { CalendarItem } from '@/types/CalendarItem';
 import dayjs from 'dayjs';
 import { format } from 'date-fns-tz';
-import { COLORS, Schedule } from '../redux/scheduleSlice';
 import store from '../redux/store';
 
 export const useCalendarEvents = () => {

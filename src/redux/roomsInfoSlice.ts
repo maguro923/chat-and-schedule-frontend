@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { add, set } from "date-fns";
 
 export interface RoomsInfoInterface {
     name: string;

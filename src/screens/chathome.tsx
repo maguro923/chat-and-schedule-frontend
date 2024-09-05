@@ -1,11 +1,8 @@
-import React, { cloneElement, useEffect, useRef, useState } from 'react';
-import {  Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {  Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, ListItem } from '@rneui/base'
+import { ListItem } from '@rneui/base'
 import Chat from './chat';
-import { format } from 'date-fns-tz';
-import { set, sub } from 'date-fns';
-import * as Crypto from 'expo-crypto';
 import { Avatar, Badge } from '@rneui/themed';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NativeStackScreenProps } from 'react-native-screens/lib/typescript/native-stack/types';
@@ -13,7 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { URL } from '../api/config';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { Overlay } from '@rneui/themed';
 import { setAddFriend, setAddParticipant, setAddRoom } from '../redux/overlaySlice';
 import AddFriendScreen from './addfriend';

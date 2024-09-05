@@ -1,17 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {  KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { setAddParticipant, setAddRoom } from '../redux/overlaySlice';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { setAddParticipant } from '../redux/overlaySlice';
 import { AppDispatch, RootState } from '../redux/store';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useDispatch, useSelector } from 'react-redux';
-import { Avatar, Badge, CheckBox, Input } from '@rneui/themed';
-import { Button, ListItem,Input as BaseInput } from '@rneui/base'
+import { Avatar, CheckBox } from '@rneui/themed';
+import { Button, ListItem } from '@rneui/base'
 import { URL } from '../api/config';
-import { TextInput } from 'react-native-gesture-handler';
 import { sendWebSocketMessage } from '../redux/webSocketSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { addRoomInfo, addRoomParticipant } from '../redux/roomsInfoSlice';
-import { format } from 'date-fns-tz';
+import { addRoomParticipant } from '../redux/roomsInfoSlice';
 
 export default function AddParticipantScreen(props: {id: string}) {
     const dispatch:AppDispatch = useDispatch();

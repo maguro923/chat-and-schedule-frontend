@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Text, StyleSheet, TextInput } from "react-native";
 import { Button, Input, Input as BaseInput } from '@rneui/base';
 import { login, LoginJsonInterface, register, RegisterJsonInterface, } from './../api/api';
