@@ -8,7 +8,7 @@ import { addRoomInfo, addRoomParticipant, deleteRoomParticipant } from '../redux
 import { save_messages } from '../database/savemessage';
 //------------------------------------------------------------------------
 //循環インポートとなるが、storeを使うために必要なので無視
-import { connectWebSocket, sendWebSocketMessage, setIsConnected } from '../redux/webSocketSlice';
+import { connectionClosed, connectWebSocket, sendWebSocketMessage, setError, setIsConnected } from '../redux/webSocketSlice';
 import { store } from '../redux/store';
 //------------------------------------------------------------------------
 
@@ -25,6 +25,7 @@ class WebSocketService {
     private replyHandlers: Map<string, ReplyHandler> = new Map();
     private userid: string = "";
     private headers: { [key: string]: string } = {};
+    private is_tryreconnect: boolean = false;
     
     constructor() {
         //受信した最新メッセージをstoreに保存
@@ -235,12 +236,13 @@ class WebSocketService {
         this.replyHandlers.set("reply-GetFriendList", (response: any) => {});
     }
 
-    connect(user_id: string, headers: { [key: string]: string } = {}): Promise<void> {
+    connect(user_id: string, headers: { [key: string]: string } = {}, retry?:boolean): Promise<void> {
         return new Promise((resolve, reject) => {
             const ws_url = new URL(url + user_id);
             this.socket = new WebSocket(ws_url.toString());
             this.userid = user_id;
             this.headers = headers;
+            this.is_tryreconnect = retry===undefined?false:retry;
 
             //初回接続時認証情報を送信
             this.socket.onopen = () => {
@@ -278,7 +280,13 @@ class WebSocketService {
 
             this.socket.onclose = () => {
                 console.warn("WebSocket connection closed. trying to reconnect...");
-                this.connect(user_id, headers);
+                if (this.is_tryreconnect===false){
+                    this.connect(user_id, headers, true);
+                }else{
+                    console.error("Failed to reconnect. WebSocket connection closed.");
+                    store.dispatch(connectionClosed());
+                    store.dispatch(setError("Failed to reconnect. WebSocket connection closed."));
+                }
             };
         });
     }
