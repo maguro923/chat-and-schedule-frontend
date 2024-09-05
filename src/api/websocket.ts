@@ -261,7 +261,7 @@ class WebSocketService {
                     this.is_verified = true;
                     console.log("WebSocket connection verified.");
                 } else if (!this.is_verified) {
-                    console.log("WebSocket connection failed.", response.content);
+                    console.error("WebSocket connection failed.", response.content);
                     this.disconnect();
                 
                 //メッセージ受信

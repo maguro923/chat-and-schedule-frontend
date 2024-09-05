@@ -29,7 +29,7 @@ export default function AddFriendScreen() {
         setIsLoading(true);
         const result = await dispatch(sendWebSocketMessage({"type":"SearchUsers","content":{"key":searchText}}));
         const respones:any = unwrapResult(result);
-        console.log(respones);
+        //console.log(respones);
         setUserList(respones.content);
         setIsLoading(false);
     }
@@ -46,7 +46,7 @@ export default function AddFriendScreen() {
     const send_FriendRequest = async (userid: string) => {
         const result = await dispatch(sendWebSocketMessage({"type":"Friend","content":{"friend_id":userid}}));
         const response:any = unwrapResult(result);
-        console.log(response);
+        //console.log(response);
         if (response.content.message === "Friend request sent" || response.content.message === "Already sent friend request") {
             console.log("フレンドリクエストを送信しました");
             dispatch(setSendedRequests(userid));
@@ -57,7 +57,7 @@ export default function AddFriendScreen() {
     const accept_FriendRequest = async (userid: string) => {
         const result = await dispatch(sendWebSocketMessage({"type":"Friend","content":{"friend_id":userid}}));
         const response:any = unwrapResult(result);
-        console.log("RESPONSE",response);
+        //console.log("RESPONSE",response);
         if (response.content.message === "Friend is made") {
             console.log("フレンドリクエストを受理しました");
             dispatch(addFriend(userid));
