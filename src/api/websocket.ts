@@ -25,7 +25,7 @@ class WebSocketService {
     private replyHandlers: Map<string, ReplyHandler> = new Map();
     private userid: string = "";
     private headers: { [key: string]: string } = {};
-    private is_tryreconnect: boolean = false;
+    //private is_tryreconnect: boolean = false;
     
     constructor() {
         //受信した最新メッセージをstoreに保存
@@ -135,6 +135,7 @@ class WebSocketService {
               //レスポンスに対する処理
               if(status === 200){
                 console.log("アクセストークンの再発行に成功しました");
+                this.headers = {"access_token": res.access_token};
                 store.dispatch(setUserDataAsync(new_userdata))
                   .then(() => {
                     send_reauth(res,device_id);
@@ -242,15 +243,17 @@ class WebSocketService {
             this.socket = new WebSocket(ws_url.toString());
             this.userid = user_id;
             this.headers = headers;
-            this.is_tryreconnect = retry===undefined?false:retry;
+            const is_tryreconnect = retry===undefined?false:retry;
 
             //初回接続時認証情報を送信
             this.socket.onopen = () => {
+                console.log("Start trying to connect to WebSocket server...\n", ws_url.toString(),"\n" ,headers);
                 this.socket?.send(JSON.stringify({ "type": 'init', "content": headers }));
                 resolve();
             };
 
             this.socket.onerror = (error) => {
+                this.is_verified = false;
                 console.error("WebSocket error:", error);
                 reject(error);
             };
@@ -263,7 +266,7 @@ class WebSocketService {
                     this.is_verified = true;
                     console.log("WebSocket connection verified.");
                 } else if (!this.is_verified) {
-                    console.error("WebSocket connection failed.", response.content);
+                    console.error("WebSocket connection failed:", response.content);
                     this.disconnect();
                 
                 //メッセージ受信
@@ -279,8 +282,9 @@ class WebSocketService {
             };
 
             this.socket.onclose = () => {
+                this.is_verified = false;
                 console.warn("WebSocket connection closed. trying to reconnect...");
-                if (this.is_tryreconnect===false){
+                if (is_tryreconnect===false){
                     this.connect(user_id, headers, true);
                 }else{
                     console.error("Failed to reconnect. WebSocket connection closed.");
