@@ -218,28 +218,29 @@ function HomeScreen() {
   const navigation:any = useNavigation();
 
   return (
-        <Tab.Navigator >
-            <Tab.Screen name="ホーム" component={ScheduleHome} options={({route}) => ({
-              tabBarIcon:({focused})=> <Icon name="home" size={24} color={focused?"#007AFF":"gray"}/>,
-              headerStyle: {backgroundColor: 'whitesmoke'},
-              headerTitleStyle:{fontSize:30},
-              headerShown: getHeaderVisibility(route),
-              tabBarStyle:{display: getHeaderVisibility(route)?"flex":"none"},
-              headerRight: (props) => (
-                <View style={{marginRight:12,flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                  <Icon name="pluscircleo" size={30} onPress={() => dispatch(setAddSchedule(true))} />
-                  <Avatar rounded size={36} source={{uri:URL+userdata.userdata.avatar_path}} 
-                  containerStyle={{backgroundColor:"gray",marginLeft:24}} onPress={() => navigation.navigate("ホーム",{screen:"ユーザー設定"})}/>
-                </View>
-              ),
-            })}/>
-            <Tab.Screen name="チャット" component={ChatHome} options={({route}) => ({
-              tabBarBadge: count===0 ? undefined : count,
-              tabBarIcon:({focused})=> <Icon name="message1" size={24} color={focused?"#007AFF":"gray"} />,
-              tabBarStyle:{display: getTabBarVisibility(route)?"flex":"none"},
-              headerShown: false
-            })}/>
-        </Tab.Navigator>
+    <Tab.Navigator>
+        <Tab.Screen name="ホーム" component={ScheduleHome} options={({route}) => ({
+          tabBarIcon:({focused})=> <Icon name="home" size={24} color={focused?"#007AFF":"gray"}/>,
+          headerStyle: {backgroundColor: 'whitesmoke'},
+          headerTitleStyle:{fontSize:30},
+          headerShown: getHeaderVisibility(route),
+          tabBarStyle:{display: getHeaderVisibility(route)?"flex":"none"},
+          headerRight: (props) => (
+            <View style={{marginRight:12,flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Icon name="pluscircleo" size={30} onPress={() => dispatch(setAddSchedule(true))} />
+              <Avatar rounded size={36} source={{uri:URL+userdata.userdata.avatar_path}} 
+                containerStyle={{backgroundColor:"gray",marginLeft:24}} onPress={() => {
+                  navigation.navigate("ホーム",{screen:"ユーザー設定"})}}/>
+            </View>
+          ),
+        })}/>
+        <Tab.Screen name="チャット" component={ChatHome} options={({route}) => ({
+          tabBarBadge: count===0 ? undefined : count,
+          tabBarIcon:({focused})=> <Icon name="message1" size={24} color={focused?"#007AFF":"gray"} />,
+          tabBarStyle:{display: getTabBarVisibility(route)?"flex":"none"},
+          headerShown: false
+        })}/>
+    </Tab.Navigator>
   );
 }
 
