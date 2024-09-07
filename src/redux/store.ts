@@ -8,6 +8,7 @@ import participantsInfoSlice from "./participantsInfoSlice";
 import messagesListSlice from "./messagesListSlice";
 import overlaySlice from "./overlaySlice";
 import scheduleSlice from "./scheduleSlice";
+import isShownButtonSlice from "./isShownButtonSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     messageslist: messagesListSlice,
     overlay: overlaySlice,
     schedule: scheduleSlice,
+    isShownButton: isShownButtonSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
