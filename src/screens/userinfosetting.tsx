@@ -9,12 +9,11 @@ import { setIsPressedUserSaveButtom, setIsShownUserSaveButtom } from '../redux/i
 import { pickImageAsync } from '../utils/pickimage';
 import { set_useravatar, set_userinfo } from '../api/api';
 import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
-import { set } from 'date-fns';
 import { randomString } from '../utils/randomstring';
 
-export default function UesrInfoScreen(props:any) {
+export default function UesrInfoScreen() {
     const dispatch: AppDispatch = useDispatch();
-    const isShownUserSabveButton = useSelector((state: RootState) => state.isShownButton.isShownUserSaveButton);
+    const isShownUserSaveButton = useSelector((state: RootState) => state.isShownButton.isShownUserSaveButton);
     const isPressedUserSaveButton = useSelector((state: RootState) => state.isShownButton.isPressedUserSaveButton);
     const friend_list = useSelector((state: RootState) => state.participantsinfo.friends);
     const participants = useSelector((state: RootState) => state.participantsinfo.participants);
@@ -34,9 +33,9 @@ export default function UesrInfoScreen(props:any) {
 
         if (username === "" || /[#]/.test(username)){
             dispatch(setIsShownUserSaveButtom(false));
-        }else if ((avatarPath !== URL + user.avatar_path || username !== user.name) && isShownUserSabveButton === false) {
+        }else if ((avatarPath !== URL + user.avatar_path || username !== user.name) && isShownUserSaveButton === false) {
             dispatch(setIsShownUserSaveButtom(true));
-        }else if(avatarPath === URL + user.avatar_path && username === user.name && isShownUserSabveButton === true){
+        }else if(avatarPath === URL + user.avatar_path && username === user.name && isShownUserSaveButton === true){
             dispatch(setIsShownUserSaveButtom(false));
         }
     }, [avatarPath, username]);
@@ -111,7 +110,7 @@ export default function UesrInfoScreen(props:any) {
                     <Avatar.Accessory size={30} />
                 </Avatar>
             </Pressable>
-            <TextInput placeholder="タイトル"
+            <TextInput placeholder="ユーザー名"
               style={styles.input} 
               value={username}
               onChangeText={setUsername}
@@ -152,7 +151,7 @@ export default function UesrInfoScreen(props:any) {
                     <Avatar.Accessory size={30} />
                 </Avatar>
             </Pressable>
-            <TextInput placeholder="タイトル"
+            <TextInput placeholder="ユーザー名"
               style={styles.input} 
               value={username}
               onChangeText={setUsername}
