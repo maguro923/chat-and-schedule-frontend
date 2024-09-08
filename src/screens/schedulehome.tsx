@@ -1,5 +1,5 @@
 import React, { useEffect,useMemo,useRef,useState } from 'react';
-import { FlatList, Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CalendarList, LocaleConfig } from 'react-native-calendars';
 import { Overlay } from '@rneui/themed';
@@ -19,6 +19,7 @@ import EditScheduleScreen from './scheduleinfo';
 import { createStackNavigator } from '@react-navigation/stack';
 import UesrInfoScreen from './userinfosetting';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { setIsPressedUserSaveButtom } from '../redux/isShownButtonSlice';
 
 //日本語化
 LocaleConfig.locales.jp = {
@@ -182,6 +183,9 @@ export function ScheduleHomeScreen() {
 }
 
 export default function ScheduleHome() {
+  const dispatch: AppDispatch = useDispatch();
+  const isShownUserSaveButton = useSelector((state: RootState) => state.isShownButton.isShownUserSaveButton);
+  const isPressedUserSaveButton = useSelector((state: RootState) => state.isShownButton.isPressedUserSaveButton);
   return (
     <Stack.Navigator>
       <Stack.Screen name="ScheduleHomeScreen" component={ScheduleHomeScreen} options={{
@@ -194,6 +198,12 @@ export default function ScheduleHome() {
             <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <Icon name={"left"} size={30} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
               <Text style={{marginLeft: 20,fontSize: 30,marginRight:"auto"}}>ユーザー情報</Text>
+              {isPressedUserSaveButton?
+              <ActivityIndicator style={{marginLeft:"auto",marginRight:20}} color="blue" />
+              :isShownUserSaveButton?
+              <Pressable onPress={()=>dispatch(setIsPressedUserSaveButtom(true))}>
+                <Text style={{marginRight: 20,fontSize: 24}}>保存</Text>
+              </Pressable>:<></>}
             </View>
             </SafeAreaView>
           );

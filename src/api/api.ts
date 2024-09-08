@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {URL} from './config';
+import { URL } from './config';
 
 export interface LoginJsonInterface {
     email: string;
@@ -138,6 +138,60 @@ export async function get_usersinfo(access_token: string, user_id: string,partic
             'participants-id': JSON.stringify(participants)
         }}
     )
+        .then(res => {
+            return [res.status,res.data];
+        })
+        .catch(error => {
+            if (error.response === undefined) {
+                console.error("Error:",error);
+                return [-1, {"detail": "AxiosError"}];
+            }else{
+                return [error.response.status, error.response.data];
+            }
+        });
+    return [status,res];
+}
+
+export async function set_useravatar(user_id: string, access_token: string, device_id: string, filepath: string, filename: string) {
+    const formData = new FormData();
+    formData.append('file', {
+        uri: filepath,
+        name: `${filename}.png`,
+        type: 'image/png'
+    } as any);
+    const [status,res] = await axios.post(
+        `${URL}/avatars/users/${user_id}`,
+        formData,
+        {headers: {
+            'Content-Type': 'multipart/form-data',
+            'access-token': access_token,
+            'device-id': device_id
+        }}
+    )
+        .then(res => {
+            return [res.status,res.data];
+        })
+        .catch(error => {
+            if (error.response === undefined) {
+                console.error("Error:",error);
+                return [-1, {"detail": "AxiosError"}];
+            }else{
+                return [error.response.status, error.response.data];
+            }
+        });
+    return [status,res];
+}
+
+export async function set_userinfo(user_id: string, access_token: string, device_id: string, username: string) {
+    const [status,res] = await axios.post(
+        `${URL}/users/${user_id}`,
+        {},
+        {headers: {
+            'Content-Type': 'application/json',
+            'access-token': access_token,
+            'device-id': device_id,
+            'username': username
+        }})
         .then(res => {
             return [res.status,res.data];
         })
