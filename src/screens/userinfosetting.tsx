@@ -100,6 +100,45 @@ export default function UesrInfoScreen(props:any) {
         <View style={styles.container}>
         {Platform.OS === "ios"?(
         <KeyboardAvoidingView>
+        <View style={{flex:1}}>
+            <Pressable style={styles.header} onPress={()=>{
+                pickImageAsync().then((res) => {
+                    if (res !== null) {
+                        setAvatarPath(res);
+                    }
+                });}}>
+                <Avatar rounded size={150} source={{uri:avatarPath}} containerStyle={{backgroundColor:"gray"}}>
+                    <Avatar.Accessory size={30} />
+                </Avatar>
+            </Pressable>
+            <TextInput placeholder="タイトル"
+              style={styles.input} 
+              value={username}
+              onChangeText={setUsername}
+              keyboardType="default"
+              autoCorrect={false}
+              multiline={true}
+            />
+            <Text style={{color:"red",textAlign:"center"}}>{username_error}</Text>
+            <Text style={{fontSize:24,marginLeft:16,marginVertical:8}}>フレンド一覧</Text>
+            {friend_list.length===0?
+            //ユーザーが見つからない場合
+            <View style={{justifyContent:"center",alignItems:"center",flex:1}}>
+                <Text style={{fontSize:20}}>フレンドが見つかりません</Text>
+            </View>
+            :
+            //ユーザーリスト表示
+            <ScrollView style={{flex:1}}>
+            {friend_list.map((friend_id) => (
+            <ListItem key={friend_id} onPress={()=>console.log(friend_id)} >
+                <Avatar rounded size={50} source={{uri:URL+participants[friend_id].avatar_path}} containerStyle={{backgroundColor:"gray"}} />
+                <ListItem.Content>
+                    <ListItem.Title numberOfLines={1} style={{fontSize:24}}>{participants[friend_id].name}</ListItem.Title>
+                </ListItem.Content>
+            </ListItem>
+            ))}
+            </ScrollView>}
+        </View>
         </KeyboardAvoidingView>
         ):(
         <View style={{flex:1}}>
