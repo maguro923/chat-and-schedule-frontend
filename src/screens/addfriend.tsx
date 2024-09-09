@@ -146,7 +146,7 @@ export default function AddFriendScreen() {
                     :
                 //フレンドリクエストを送信していない場合
                     <Button onPress={() => {
-                        console.log(participants.sended_requests,user.id)
+                        //console.log(participants.sended_requests,user.id)
                         send_FriendRequest(user.id);
                     }}>フレンド申請</Button>
                 }
