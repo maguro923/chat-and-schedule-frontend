@@ -186,9 +186,8 @@ class WebSocketService {
             console.log("フレンド関係が成立しました",message.content);
             store.dispatch(addFriend(message.content));
         });
-        //ルーム参加に対する処理
+        //新規ルーム参加に対する処理
         this.messageHandlers.set("JoinRoom", async(message: any) => {
-            //console.log("JoinRoom:", message);
             const participants = store.getState().participantsinfo.participants
             store.dispatch(addRoomInfo({
                 "id":message.content.id,
@@ -216,6 +215,31 @@ class WebSocketService {
                     console.error("ユーザ情報の取得に失敗しました",res.detail);
                 }
             }
+        });
+        //既存ルームに対するユーザー参加に対する処理
+        this.messageHandlers.set("JoinUser", async(message: any) => {
+            const new_participant:string[] = [message.content.user_id];
+            //参加者情報を取得
+            const participants = store.getState().participantsinfo.participants
+            var participants_id:string[] = [];
+            for (let id in participants){
+                participants_id.push(id);
+            }
+            if (!participants_id.includes(message.content.user_id)){
+                const userdata = store.getState().userdata.userdata;
+                const [status,res] = await get_usersinfo(userdata.access_token,userdata.id,new_participant);
+                if(status === 200){
+                    console.log("ユーザ情報を取得しました",res);
+                    store.dispatch(addParticipantsInfo(res.users_info));
+                }else{
+                    console.error("ユーザ情報の取得に失敗しました",res.detail);
+                }
+            }
+            //ルーム情報を更新
+            store.dispatch(addRoomParticipant({
+                "id": message.content.room_id,
+                "participants": new_participant
+            }));
         });
         this.messageHandlers.set("Error", (message: any) => {
             console.error("Error:", message);
