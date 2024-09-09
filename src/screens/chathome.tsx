@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {  ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ListItem } from '@rneui/base'
 import Chat from './chat';
@@ -20,6 +20,7 @@ import { deleteRoominfo } from '../redux/roomsInfoSlice';
 import { delete_messages } from '../database/deletemessages';
 import { focusMessages } from '../redux/messagesListSlice';
 import RoomInfoScreen from './roominfosetting';
+import { setIsPressedRoomSaveButtom } from '../redux/isShownButtonSlice';
 
 type RootStackParamList = {
   ChatHomeScreen: undefined;
@@ -147,6 +148,8 @@ function ChatHomeScreen({route, navigation}: RootStackScreenProps<'ChatHomeScree
 
 export default function ChatHome() {
   const dispatch:AppDispatch = useDispatch();
+  const isPressedRoomSaveButton = useSelector((state: RootState) => state.isShownButton.isPressedRoomSaveButton);
+  const isShownRoomSaveButton = useSelector((state: RootState) => state.isShownButton.isShownRoomSaveButton);
   return (
     <Stack.Navigator>
       <Stack.Screen name="ChatHomeScreen" component={ChatHomeScreen} options={{
@@ -183,6 +186,12 @@ export default function ChatHome() {
             <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <Icon name={"left"} size={30} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
               <Text style={{marginLeft: 20,fontSize: 30,marginRight:"auto"}}>ルーム情報</Text>
+              {isPressedRoomSaveButton?
+              <ActivityIndicator style={{marginLeft:"auto",marginRight:20}} color="blue" />
+              :isShownRoomSaveButton?
+              <Pressable onPress={()=>dispatch(setIsPressedRoomSaveButtom(true))}>
+                <Text style={{marginRight: 20,fontSize: 24}}>保存</Text>
+              </Pressable>:<></>}
             </View>
             </SafeAreaView>
           );
@@ -191,7 +200,6 @@ export default function ChatHome() {
     </Stack.Navigator>
   );
 }
-//Icon name={"setting"} size={24} style={{marginRight: 20}} onPress={() => console.log("Setting")} />
 
 const styles = StyleSheet.create({
     container: {

@@ -205,3 +205,58 @@ export async function set_userinfo(user_id: string, access_token: string, device
         });
     return [status,res];
 }
+export async function set_roomavatar(room_id: string, user_id: string, access_token: string, device_id: string, filepath: string, filename: string) {
+    const formData = new FormData();
+    formData.append('file', {
+        uri: filepath,
+        name: `${filename}.png`,
+        type: 'image/png'
+    } as any);
+    const [status,res] = await axios.post(
+        `${URL}/avatars/rooms/${room_id}`,
+        formData,
+        {headers: {
+            'Content-Type': 'multipart/form-data',
+            'access-token': access_token,
+            'device-id': device_id,
+            'user-id': user_id
+        }}
+    )
+        .then(res => {
+            return [res.status,res.data];
+        })
+        .catch(error => {
+            if (error.response === undefined) {
+                console.error("Error:",error);
+                return [-1, {"detail": "AxiosError"}];
+            }else{
+                return [error.response.status, error.response.data];
+            }
+        });
+    return [status,res];
+}
+
+export async function set_roominfo(room_id: string, user_id: string, access_token: string, device_id: string, roomname: string) {
+    const [status,res] = await axios.post(
+        `${URL}/rooms/${room_id}`,
+        {},
+        {headers: {
+            'Content-Type': 'application/json',
+            'access-token': access_token,
+            'device-id': device_id,
+            'userid': user_id,
+            'roomname': roomname
+        }})
+        .then(res => {
+            return [res.status,res.data];
+        })
+        .catch(error => {
+            if (error.response === undefined) {
+                console.error("Error:",error);
+                return [-1, {"detail": "AxiosError"}];
+            }else{
+                return [error.response.status, error.response.data];
+            }
+        });
+    return [status,res];
+}

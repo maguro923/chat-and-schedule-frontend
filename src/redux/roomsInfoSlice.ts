@@ -36,7 +36,13 @@ export const userDataSlice = createSlice({
             state.roomsInfo.focusRoom = action.payload;
         },
         addRoomInfo: (state, action: PayloadAction<RoomsInfoInterface>) => {
-            state.roomsInfo.rooms.push(action.payload);
+            state.roomsInfo.rooms = state.roomsInfo.rooms.map(room => {
+                if (room.id === action.payload.id) {
+                    return action.payload;
+                } else {
+                    return room;
+                }
+            });
         },
         addRoomParticipant: (state, action: PayloadAction<{id:string,participants:string[]}>) => {
             if (state.roomsInfo.participants[action.payload.id] === undefined) {
