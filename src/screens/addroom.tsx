@@ -100,7 +100,7 @@ export default function AddRoomScreen() {
                             dispatch(addRoomInfo({
                                 "name": roomName,
                                 "id": response.content.id,
-                                "avatar_path": "/avatars/rooms/default.png",
+                                "avatar_path": response.content.avatar_path,
                                 "joined_at": format(new Date(), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'})}))
                         }else{
                             console.error("ルーム作成に失敗しました",response.content?.message);
