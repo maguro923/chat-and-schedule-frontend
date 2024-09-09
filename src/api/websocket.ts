@@ -241,6 +241,13 @@ class WebSocketService {
                 "participants": new_participant
             }));
         });
+        //既存ルームに対するユーザーの退室に対する処理
+        this.messageHandlers.set("LeaveUser", async(message: any) => {
+            store.dispatch(deleteRoomParticipant({
+                "roomid": message.content.room_id,
+                "participant": message.content.user_id
+            }));
+        });
         this.messageHandlers.set("Error", (message: any) => {
             console.error("Error:", message);
         });
