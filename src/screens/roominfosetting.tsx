@@ -52,7 +52,7 @@ export default function RoomInfoScreen({route}: RootStackScreenProps<'RoomInfoSc
                 setAvatarPath(`${URL}/avatars/rooms/${room_id}/${filename}.png`);
                 console.log("アバターを更新しました");
             } else {
-                setAvatarPath(URL + user.avatar_path);
+                setAvatarPath(URL + room_info.avatar_path);
                 console.error("アバターの更新に失敗しました",res.detail);
             }
         }
