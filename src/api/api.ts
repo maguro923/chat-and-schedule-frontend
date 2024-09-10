@@ -185,12 +185,11 @@ export async function set_useravatar(user_id: string, access_token: string, devi
 export async function set_userinfo(user_id: string, access_token: string, device_id: string, username: string) {
     const [status,res] = await axios.post(
         `${URL}/users/${user_id}`,
-        {},
+        {"name": username},
         {headers: {
             'Content-Type': 'application/json',
             'access-token': access_token,
-            'device-id': device_id,
-            'username': username
+            'device-id': device_id
         }})
         .then(res => {
             return [res.status,res.data];
@@ -239,13 +238,12 @@ export async function set_roomavatar(room_id: string, user_id: string, access_to
 export async function set_roominfo(room_id: string, user_id: string, access_token: string, device_id: string, roomname: string) {
     const [status,res] = await axios.post(
         `${URL}/rooms/${room_id}`,
-        {},
+        {"name": roomname},
         {headers: {
             'Content-Type': 'application/json',
             'access-token': access_token,
             'device-id': device_id,
-            'userid': user_id,
-            'roomname': roomname
+            'userid': user_id
         }})
         .then(res => {
             return [res.status,res.data];
