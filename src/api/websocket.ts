@@ -248,6 +248,15 @@ class WebSocketService {
                 "participant": message.content.user_id
             }));
         });
+        //ルーム情報の更新
+        this.messageHandlers.set("UpdateRoom", async(message: any) => {
+            store.dispatch(addRoomInfo({
+                "id": message.content.id,
+                "name": message.content.name,
+                "avatar_path": message.content.avatar_path,
+                "joined_at": message.content.joined_at
+            }));
+        });
         this.messageHandlers.set("Error", (message: any) => {
             console.error("Error:", message);
         });
