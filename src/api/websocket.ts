@@ -67,7 +67,7 @@ class WebSocketService {
                   console.error("フォーカスに失敗しました",response1.content?.message);
                 }
             }
-            console.log("ReceiveMessage:", message);
+            //console.log("ReceiveMessage:", message);
             var receive_message: MessageInterface[] = [];
             if (message.content.type === "text") {
                 receive_message.push({
@@ -94,7 +94,7 @@ class WebSocketService {
             msg[message.content.roomid] = receive_message;
             if (store.getState().roomsinfo.roomsInfo.focusRoom === message.content.roomid) {
                 //送信先ルームにフォーカスしている場合
-                console.log("フォーカスしているルームにメッセージを受信しました",message.content);
+                //console.log("フォーカスしているルームにメッセージを受信しました",message.content);
                 store.dispatch(setMessages(msg));
                 save_messages(message.content);
                 //既読時間を更新することで突然の切断に対応する
