@@ -50,6 +50,8 @@ export default function AddFriendScreen() {
         if (response.content.message === "Friend request sent" || response.content.message === "Already sent friend request") {
             console.log("フレンドリクエストを送信しました");
             dispatch(setSendedRequests(userid));
+        }else{
+            console.error("フレンドリクエストの送信に失敗しました");
         }
     }
 
@@ -61,6 +63,8 @@ export default function AddFriendScreen() {
         if (response.content.message === "Friend is made") {
             console.log("フレンドリクエストを受理しました");
             dispatch(addFriend(userid));
+        }else{
+            console.error("フレンドリクエストの受理に失敗しました");
         }
     }
 
