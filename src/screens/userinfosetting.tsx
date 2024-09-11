@@ -159,6 +159,7 @@ export default function UesrInfoScreen() {
               autoCorrect={false}
               multiline={true}
             />
+            <Text style={{color:"gray",textAlign:"center"}}>{"ID: #"+user.id}</Text>
             <Text style={{color:"red",textAlign:"center"}}>{username_error}</Text>
             <Text style={{fontSize:24,marginLeft:16,marginVertical:8}}>フレンド一覧</Text>
             {friend_list.length===0?
