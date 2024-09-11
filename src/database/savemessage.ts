@@ -17,7 +17,7 @@ export const save_messages = async(message:SaveMessageInterface) => {
                 (id, room_id, sender_id, type, content, created_at) 
                 VALUES (?, ?, ?, ?, ?, ?)`, 
             [message.id, message.roomid, message.senderid, message.type, message.type==="text"?message.text as string:message.message as string, message.created_at]);
-        await db.closeAsync();
+        //await db.closeAsync();
     }catch(error){
         console.error('Failed to save message:', error);
     }

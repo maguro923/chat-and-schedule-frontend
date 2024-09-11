@@ -12,7 +12,7 @@ export const save_schedule = async(schedule:Schedule) => {
                 (id, text, info, color, fromAt, toAt) 
                 VALUES (?, ?, ?, ?, ? ,?)`, 
             [schedule.id, schedule.text, schedule.info, schedule.color, schedule.fromAt.toISOString(), schedule.toAt.toISOString()]);
-        await db.closeAsync();
+        //await db.closeAsync();
     }catch(error){
         console.error('Failed to save schedule:', error);
     }

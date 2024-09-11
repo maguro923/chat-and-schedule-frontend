@@ -12,7 +12,7 @@ export const update_schedule = async(schedule:Schedule) => {
             fromAt = ?,
             toAt = ? WHERE id = ?`,
             [schedule.text, schedule.info, schedule.color, schedule.fromAt.toISOString(), schedule.toAt.toISOString(), schedule.id]);
-        await db.closeAsync();
+        //await db.closeAsync();
     }catch(error){
         console.error('Failed to update schedule:', error);
     }
