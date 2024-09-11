@@ -28,7 +28,7 @@ export const userDataSlice = createSlice({
             state.participants = action.payload;
             for (const userid in action.payload) {
                 if (Object.prototype.hasOwnProperty.call(action.payload, userid)) {
-                    if (action.payload[userid].is_friend) {
+                    if (action.payload[userid].is_friend && !state.friends.includes(userid)) {
                         state.friends.push(userid);
                     }
                 }
@@ -38,7 +38,7 @@ export const userDataSlice = createSlice({
             for (const userid in action.payload) {
                 if (Object.prototype.hasOwnProperty.call(action.payload, userid)) {
                     state.participants[userid] = action.payload[userid];
-                    if (action.payload[userid].is_friend) {
+                    if (action.payload[userid].is_friend && !state.friends.includes(userid)) {
                         state.friends.push(userid);
                     }
                 }
