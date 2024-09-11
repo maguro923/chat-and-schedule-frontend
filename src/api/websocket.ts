@@ -3,7 +3,7 @@ import { setLatestMessages ,MessagesListInterface, MessageInterface, setMessages
 import { get_usersinfo, refresh, RefreshJsonInterface } from './api';
 import { setUserDataAsync, setUserDataInterface } from '../redux/userDataSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { addFriend, addParticipantsInfo, setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
+import { addFriend, addParticipantsInfo, ParticipantsInfoInterface, setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
 import { addRoomInfo, addRoomParticipant, deleteRoomParticipant } from '../redux/roomsInfoSlice';
 import { save_messages } from '../database/savemessage';
 //------------------------------------------------------------------------
@@ -256,6 +256,17 @@ class WebSocketService {
                 "avatar_path": message.content.avatar_path,
                 "joined_at": message.content.joined_at
             }));
+        });
+        //ユーザー情報の更新
+        this.messageHandlers.set("UpdateUser", async(message: any) => {
+            const participant_info:ParticipantsInfoInterface = {
+                [message.content.id]: {
+                    "name": message.content.name,
+                    "avatar_path": message.content.avatar_path,
+                    "is_friend": message.content.is_friend
+                }
+            };
+            store.dispatch(addParticipantsInfo(participant_info));
         });
         this.messageHandlers.set("Error", (message: any) => {
             console.error("Error:", message);
