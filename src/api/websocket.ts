@@ -6,13 +6,12 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { addFriend, addParticipantsInfo, ParticipantsInfoInterface, setFriendRequests, setParticipantsInfo } from '../redux/participantsInfoSlice';
 import { addRoomInfo, addRoomParticipant, deleteRoomParticipant } from '../redux/roomsInfoSlice';
 import { save_messages } from '../database/savemessage';
+import { WS_URL } from './config';
 //------------------------------------------------------------------------
 //循環インポートとなるが、storeを使うために必要なので無視
 import { connectionClosed, connectWebSocket, sendWebSocketMessage, setError, setIsConnected } from '../redux/webSocketSlice';
 import { store } from '../redux/store';
 //------------------------------------------------------------------------
-
-const url = 'wss://api.chat-and-schedule.com/ws/';
 
 type MessageHandler = (message: any) => void;
 type ReplyHandler = (response: any) => void;
@@ -290,7 +289,7 @@ class WebSocketService {
 
     connect(user_id: string, headers: { [key: string]: string } = {}, retry?:boolean): Promise<void> {
         return new Promise((resolve, reject) => {
-            const ws_url = new URL(url + user_id);
+            const ws_url = new URL(WS_URL + user_id);
             this.socket = new WebSocket(ws_url.toString());
             this.userid = user_id;
             this.headers = headers;
