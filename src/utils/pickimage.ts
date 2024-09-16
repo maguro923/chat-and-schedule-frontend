@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 
 export const pickImageAsync = async() => {
     // 画像をデバイス内から選択し256px×256pxにリサイズして返す

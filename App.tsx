@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { Suspense, useEffect, useState } from 'react';
-import { Text, View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import 'react-native-gesture-handler';
 import * as SQLite from 'expo-sqlite';
 import { Provider } from 'react-redux';
