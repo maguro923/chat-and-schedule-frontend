@@ -10,7 +10,7 @@ export const CELL_HEIGHT = 16;
 
 const MAX_EVENTS = 5; // 1日に表示する最大予定数
 const CELL_ITEM_PADDING = 2; // 予定間の余白
-const CELL_RADIUS = 3; // 予定バーの
+const CELL_RADIUS = 3; // 予定バーの角丸
 
 type Props = DayProps & {
   date?: DateData | undefined;
@@ -20,12 +20,8 @@ type Props = DayProps & {
   setIsDisplayCalendar: any;
 };
 
-// TODO: 1日あたり5件など多くの予定がある場合は「more」などを表示させる必要あり
 export const CalendarDayItem = (props: Props) => {
-  //console.log("props",props);
   const { date, eventItems: dayItems, children, state, cellMinHeight, flatListRef, setIsDisplayCalendar } = props;
-  //console.log("おためし",(dayItems.get((date as DateData).dateString) ?? []).sort((a, b) => b.index - a.index))
-  //console.log("dayItems",dayItems,"\ndate",date,"\nNANIKA",(date as DateData).dateString)
   const schedule = useSelector((state: RootState) => state.schedule.schedule);
 
   // 該当日付の予定を表示順(インデックス)に並び替える
@@ -42,7 +38,6 @@ export const CalendarDayItem = (props: Props) => {
   // 予定クリック
   const onEventPress = useCallback((item: any) => {
     const sorted = [...schedule].sort((a,b) => {return a.fromAt.getTime() - b.fromAt.getTime();});
-    //console.log('on press event', item,"sorted\n",sorted);
     setIsDisplayCalendar(false);
     flatListRef.current.scrollToIndex({animated: true, index: sorted.findIndex( a => a.id===item.id )===-1 ? 0 : sorted.findIndex( a => a.id===item.id)});
   }, []);
@@ -80,20 +75,17 @@ export const CalendarDayItem = (props: Props) => {
     );
   }, []);
 
-  //console.log("events",events);
-
   return (
     <TouchableOpacity
       style={[
         styles.cell,
         {
-          //backgroundColor: 'green',
           minHeight: cellMinHeight,
           maxWidth: MAX_EVENTS * CELL_HEIGHT + CELL_ITEM_PADDING,
           opacity: state == 'disabled' ? 0.4 : 1, // 表示月以外の日付は薄く表示
         },
       ]}
-      //onPress={() => onDayPress()}
+      //onPress={onDayPress}
     >
       {/* chilerenに予定日が含まれているので表示 */}
       <Text style={[styles.dayText, state == 'today' && styles.todayText]}>{children}</Text>
