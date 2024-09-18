@@ -24,7 +24,6 @@ class WebSocketService {
     private replyHandlers: Map<string, ReplyHandler> = new Map();
     private userid: string = "";
     private headers: { [key: string]: string } = {};
-    //private is_tryreconnect: boolean = false;
     
     constructor() {
         //受信した最新メッセージをstoreに保存
