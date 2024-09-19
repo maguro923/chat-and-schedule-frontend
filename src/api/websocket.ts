@@ -92,7 +92,6 @@ class WebSocketService {
             msg[message.content.roomid] = receive_message;
             if (store.getState().roomsinfo.roomsInfo.focusRoom === message.content.roomid) {
                 //送信先ルームにフォーカスしている場合
-                //console.log("フォーカスしているルームにメッセージを受信しました",message.content);
                 store.dispatch(setMessages(msg));
                 save_messages(message.content);
                 //既読時間を更新することで突然の切断に対応する
