@@ -104,13 +104,16 @@ class WebSocketService {
         });
         //アクセストークンの再発行及び再認証
         this.messageHandlers.set("AuthInfo", async(message: any) => {
-            console.log("AuthInfo:", message);
+            //console.log("AuthInfo:", message);
             const send_reauth = async(Res:any,Device_id:any) => {
                 const result = await store.dispatch(sendWebSocketMessage({
                     "type": "ReAuth", "content": {
                         "access_token": Res.access_token, "device_id": Device_id} }));
                 const response:any = unwrapResult(result)
-                console.log("ReAuth:", response.content);
+                if (response.content?.message !== "ReAuth success"){
+                    const msg = response?.content?.message !== undefined ? response.content.message : "不明なエラー";
+                    console.error("再認証に失敗しました",msg);
+                }
             }
             const userdata = store.getState().userdata.userdata;
             const device_id = store.getState().deviceid.deviceid;
@@ -150,7 +153,7 @@ class WebSocketService {
                     //未登録のユーザーIDの場合
                     const [status,res] = await get_usersinfo(userdata.access_token,userdata.id,request_id);
                     if (status === 200){
-                        console.log("ユーザー情報を取得しました",res.users_info);
+                        //console.log("ユーザー情報を取得しました",res.users_info);
                         store.dispatch(addParticipantsInfo(res.users_info));
                     }else{
                         console.error("ユーザー情報の取得に失敗しました",res);
