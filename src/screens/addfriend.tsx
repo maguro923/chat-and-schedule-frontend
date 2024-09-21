@@ -35,10 +35,17 @@ export default function AddFriendScreen() {
     }
 
     const changeSearchText = (text: string) => {
+        const get_list = async (text: string) => {
+            setIsLoading(true);
+            const result = await dispatch(sendWebSocketMessage({"type":"SearchUsers","content":{"key":text}}));
+            const respones:any = unwrapResult(result);
+            setUserList(respones.content);
+            setIsLoading(false);
+        }
         setSearchText(text);
         const id = text.slice(1);
         if(CheckUUID(id)){
-            get_userlist();
+            get_list(text);
         }
     };
 
