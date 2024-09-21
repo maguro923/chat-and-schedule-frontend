@@ -11,6 +11,7 @@ import { sendWebSocketMessage } from '../redux/webSocketSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { URL } from '../api/config';
 import { addFriend, setSendedRequests } from '../redux/participantsInfoSlice';
+
 interface UserListInterface {
     id: string;
     name: string;
@@ -24,6 +25,7 @@ export default function AddFriendScreen() {
     const [userList, setUserList] = useState<UserListInterface[]>([]);
     const [is_loading, setIsLoading] = useState<boolean>(false);
     const participants = useSelector((state: RootState) => state.participantsinfo);
+    const [isButtonShown, setIsButtonShown] = useState<boolean>(true);
 
     const get_userlist = async () => {
         setIsLoading(true);
@@ -123,8 +125,10 @@ export default function AddFriendScreen() {
                 <ListItem.Content>
                     <ListItem.Title numberOfLines={1} style={{fontSize:24}}>{participants.participants[user].name}</ListItem.Title>
                 </ListItem.Content>
-                <Button onPress={() => {
+                <Button disabled={!isButtonShown} onPress={() => {
+                    setIsButtonShown(false);
                     accept_FriendRequest(user);
+                    setIsButtonShown(true);
                 }}>フレンド申請受理</Button>
             </ListItem>
             ))}
@@ -145,8 +149,10 @@ export default function AddFriendScreen() {
                 </ListItem.Content>
                 {participants.friend_requests.includes(user.id)?
                 //フレンドリクエストを受け取っている場合
-                <Button onPress={() => {
+                <Button disabled={!isButtonShown} onPress={() => {
+                    setIsButtonShown(false);
                     accept_FriendRequest(user.id);
+                    setIsButtonShown(true);
                 }}>フレンド申請受理</Button>
                 :participants.friends.includes(user.id)?
                 //既にフレンドの場合
@@ -156,9 +162,11 @@ export default function AddFriendScreen() {
                     <Text style={{color:"#007AFF"}}>送信済み</Text>
                     :
                 //フレンドリクエストを送信していない場合
-                    <Button onPress={() => {
+                    <Button disabled={!isButtonShown} onPress={() => {
                         //console.log(participants.sended_requests,user.id)
+                        setIsButtonShown(false);
                         send_FriendRequest(user.id);
+                        setIsButtonShown(true);
                     }}>フレンド申請</Button>
                 }
             </ListItem>
@@ -197,8 +205,10 @@ export default function AddFriendScreen() {
                 <ListItem.Content>
                     <ListItem.Title numberOfLines={1} style={{fontSize:24}}>{participants.participants[user].name}</ListItem.Title>
                 </ListItem.Content>
-                <Button onPress={() => {
+                <Button disabled={!isButtonShown} onPress={() => {
+                    setIsButtonShown(false);
                     accept_FriendRequest(user);
+                    setIsButtonShown(true);
                 }}>フレンド申請受理</Button>
             </ListItem>
             )):
@@ -218,8 +228,10 @@ export default function AddFriendScreen() {
                 </ListItem.Content>
                 {participants.friend_requests.includes(user.id)?
                 //フレンドリクエストを受け取っている場合
-                <Button onPress={() => {
+                <Button disabled={!isButtonShown} onPress={() => {
+                    setIsButtonShown(false);
                     accept_FriendRequest(user.id);
+                    setIsButtonShown(true);
                 }}>フレンド申請受理</Button>
                 :participants.friends.includes(user.id)?
                 //既にフレンドの場合
@@ -229,9 +241,11 @@ export default function AddFriendScreen() {
                     <Text style={{color:"#007AFF"}}>送信済み</Text>
                     :
                 //フレンドリクエストを送信していない場合
-                    <Button onPress={() => {
-                        console.log(participants.sended_requests,user.id)
+                    <Button disabled={!isButtonShown} onPress={() => {
+                        //</ListItem>console.log(participants.sended_requests,user.id)
+                        setIsButtonShown(false);
                         send_FriendRequest(user.id);
+                        setIsButtonShown(true);
                     }}>フレンド申請</Button>
                 }
             </ListItem>
