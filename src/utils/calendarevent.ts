@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 //import { CalendarItem } from '@/types/CalendarItem';
 import dayjs from 'dayjs';
 import { format } from 'date-fns-tz';
@@ -12,7 +12,7 @@ export const useCalendarEvents = () => {
     for (const event of events) {
       //console.log("hook-map",event);
       const dayKey = format(event.fromAt, "yyyy-MM-dd");//ddd MMM dd yyyy HH:mm:ss
-      const diff = dayjs(event.toAt).diff(event.fromAt, 'day') + 1;
+      const diff = dayjs(event.toAt).endOf("D").diff(dayjs(event.fromAt).endOf("D"), 'day') + 1;
       if (diff == 1) {
         // 予定が1日以内の場合
         const currentData = result.get(dayKey);
