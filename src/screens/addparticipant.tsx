@@ -10,6 +10,7 @@ import { URL } from '../api/config';
 import { sendWebSocketMessage } from '../redux/webSocketSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { addRoomParticipant } from '../redux/roomsInfoSlice';
+import { set } from 'date-fns';
 
 export default function AddParticipantScreen(props: {id: string}) {
     const dispatch:AppDispatch = useDispatch();
@@ -19,6 +20,7 @@ export default function AddParticipantScreen(props: {id: string}) {
     const [selectedFriends, setSelectedFriends] = useState<{ [key: string]: boolean }>({});
     const [friend_list, setFriendList] = useState<string[]>([]);
     const [select, setSelect] = useState<string[]>([]);
+    const [isPushedButton, setIsPushedButton] = useState(false);
 
     const toggle_is_select = (id: string) => {
         setSelectedFriends(prevState => ({
@@ -28,6 +30,7 @@ export default function AddParticipantScreen(props: {id: string}) {
     };
 
     const send_joinroomrequest = async() => {
+        setIsPushedButton(true);
         let is_collect = true;
         for (let user of select){
             const result = await dispatch(sendWebSocketMessage({"type":"JoinRoom","content":{"roomid":props.id,"participants":user}}))
@@ -41,6 +44,7 @@ export default function AddParticipantScreen(props: {id: string}) {
             dispatch(addRoomParticipant({id:props.id,participants:select}));
         }
         dispatch(setAddParticipant(false))
+        setIsPushedButton(false);
     }
 
     useEffect(()=>{
@@ -95,7 +99,7 @@ export default function AddParticipantScreen(props: {id: string}) {
         </View>}
         </ScrollView>
         <Button onPress={() => send_joinroomrequest()}
-            disabled={select.length===0} >招待</Button>
+            disabled={select.length===0 || isPushedButton} >招待</Button>
         </>
     );
 }

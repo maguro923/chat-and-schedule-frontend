@@ -22,6 +22,7 @@ export default function UesrInfoScreen() {
     const [username, setUsername] = useState<string>(user.name);
     const device_id = useSelector((state: RootState) => state.deviceid.deviceid);
     const [username_error, setUsername_error] = useState<string>("");
+    const [isPushedButton, setIsPushedButton] = useState(false);
 
     //ユーザー情報が変更された場合に保存ボタンを表示
     useEffect(() => {
@@ -83,7 +84,8 @@ export default function UesrInfoScreen() {
                 console.error("ユーザー情報の更新に失敗しました",res.detail);
             }
         }
-        if (isPressedUserSaveButton) {
+        if (!isPushedButton && isPressedUserSaveButton) {
+            setIsPushedButton(true);
             if (avatarPath !== URL + user.avatar_path) {
                 sendSetAvatarRequest(avatarPath,user.id,user.access_token,device_id)
             }
@@ -92,6 +94,7 @@ export default function UesrInfoScreen() {
             }
             dispatch(setIsPressedUserSaveButtom(false));
             dispatch(setIsShownUserSaveButtom(false));
+            setIsPushedButton(false);
         }
     }, [isPressedUserSaveButton]);
 

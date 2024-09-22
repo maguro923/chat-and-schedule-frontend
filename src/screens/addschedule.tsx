@@ -11,6 +11,7 @@ import { COLORS, setSchedule } from '../redux/scheduleSlice';
 import * as Crypto from 'expo-crypto';
 import { format } from 'date-fns-tz';
 import { save_schedule } from '../database/saveschedule';
+import { set } from 'date-fns';
 
 export default function AddScheduleScreen() {
     const dispatch:AppDispatch = useDispatch();
@@ -21,6 +22,7 @@ export default function AddScheduleScreen() {
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [color, setColor] = useState<string>("");
+    const [isPushedButton, setIsPushedButton] = useState(false);
 
     const AddSchedule = () => {
         return (
@@ -76,9 +78,11 @@ export default function AddScheduleScreen() {
                 </View>
                   
 
-                <Button style={{marginTop:"auto"}} title="追加" disabled={title.length===0 || description.length===0 || color===""} onPress={() => {
+                <Button style={{marginTop:"auto"}} title="追加" disabled={isPushedButton || title.length===0 || description.length===0 || color===""} onPress={() => {
+                  setIsPushedButton(true)
                   if (start_at >= end_at){
                     Alert.alert("終了時間は開始時間より前である必要があります")
+                    setIsPushedButton(false)
                     return;
                   }else{
                     const id = Crypto.randomUUID();
@@ -99,6 +103,7 @@ export default function AddScheduleScreen() {
                       color: color
                     })
                     dispatch(setAddSchedule(false))
+                    setIsPushedButton(false)
                   }
                 }}/>
             </View>

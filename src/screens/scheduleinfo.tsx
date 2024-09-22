@@ -22,7 +22,7 @@ export default function EditScheduleScreen() {
     const [color, setColor] = useState<string>(item.color);
     const [start_at, setStartAt] = useState<Date>(item.fromAt);
     const [end_at, setEndAt] = useState<Date>(item.toAt);
-
+    const [isPushedButton, setIsPushedButton] = useState(false);
     
     const AddSchedule = () => {
         return (
@@ -78,9 +78,11 @@ export default function EditScheduleScreen() {
                 </View>
                   
 
-                <Button style={{marginTop:"auto"}} title="編集" disabled={title.length===0 || description.length===0 || color===""} onPress={() => {
+                <Button style={{marginTop:"auto"}} title="編集" disabled={isPushedButton || title.length===0 || description.length===0 || color===""} onPress={() => {
+                  setIsPushedButton(true)
                   if (start_at >= end_at){
                     Alert.alert("終了時間は開始時間より前である必要があります")
+                    setIsPushedButton(false)
                     return;
                   }else{
                     const schedule:Schedule = {
@@ -94,6 +96,7 @@ export default function EditScheduleScreen() {
                     dispatch(changeSchedule(schedule));
                     update_schedule(schedule);
                     dispatch(setEditSchedule(false));
+                    setIsPushedButton(false);
                   }
                 }}/>
             </View>

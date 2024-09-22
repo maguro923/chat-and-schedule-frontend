@@ -19,6 +19,7 @@ export default function AddRoomScreen() {
     const [settingScreen,setSettingScreen] = useState(0);
     const input = useRef<BaseInput & TextInput>(null);
     const [roomName, setRoomName] = useState<string>("");
+    const [isPushedButton, setIsPushedButton] = useState(false);
 
     useEffect(()=>{
         setSettingScreen(0);
@@ -67,7 +68,10 @@ export default function AddRoomScreen() {
                         </ListItem>
                         ))}
                         </ScrollView>}
-                    <Button title="次へ" containerStyle={{width:"90%",alignSelf:"center",marginTop:16}} onPress={()=>next_screen()}/>
+                    <Button disabled={isPushedButton} title="次へ" containerStyle={{width:"90%",alignSelf:"center",marginTop:16}} onPress={()=>{
+                        setIsPushedButton(true);
+                        next_screen()
+                        setIsPushedButton(false)}}/>
                     </>
             )
             case 1:
@@ -82,8 +86,9 @@ export default function AddRoomScreen() {
                         autoCapitalize="none"
                         autoCorrect={false}
                      />
-                    <Button title="作成" disabled={roomName===""} containerStyle={{width:"90%",alignSelf:"center",marginTop:16}} onPress={async()=>{
+                    <Button title="作成" disabled={roomName==="" || isPushedButton} containerStyle={{width:"90%",alignSelf:"center",marginTop:16}} onPress={async()=>{
                         //ルーム作成処理
+                        setIsPushedButton(true);
                         var userlist:string[] = [];
                         for (var key in selectedFriends){
                             if (selectedFriends[key] === true){
@@ -106,6 +111,7 @@ export default function AddRoomScreen() {
                             console.error("ルーム作成に失敗しました",response.content?.message);
                         }
                         dispatch(setAddRoom(false));
+                        setIsPushedButton(false);
                     }} />
                     </>
             )
