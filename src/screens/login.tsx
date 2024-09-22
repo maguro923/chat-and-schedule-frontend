@@ -103,11 +103,6 @@ function RegisterScreen({route, navigation}:RootStackScreenProps<"Register">) {
     fcmtoken: SecureStore.getItem('FCMToken') || "",
   };
 
-  /*useEffect(() => {
-    console.log("RegisterScreen useEffect:",userdata.userdata);
-    //setValue(true);
-  },[userdata.userdata]);*/
-
   return (
     <SafeAreaView style={styles.container}>
       <Text style={{fontSize:24,alignSelf:"center",justifyContent:"center",margin:30}}>新規登録</Text>
