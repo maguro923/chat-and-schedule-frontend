@@ -18,8 +18,6 @@ export default function AddScheduleScreen() {
     const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
     const [start_at, setStartAt] = useState<Date>(new Date());
     const [end_at, setEndAt] = useState<Date>(new Date());
-    const titleInput = useRef<BaseInput & TextInput>(null);
-    const descriptionInput = useRef<BaseInput & TextInput>(null);
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [color, setColor] = useState<string>("");
