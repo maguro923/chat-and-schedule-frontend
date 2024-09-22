@@ -1,11 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { setAddSchedule } from '../redux/overlaySlice';
 import { AppDispatch } from '../redux/store';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import { Avatar } from '@rneui/themed';
-import { Button,Input as BaseInput } from '@rneui/base'
+import { Button } from '@rneui/base'
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { COLORS, setSchedule } from '../redux/scheduleSlice';
 import * as Crypto from 'expo-crypto';
