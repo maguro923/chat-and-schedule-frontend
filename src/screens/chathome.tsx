@@ -168,10 +168,10 @@ export default function ChatHome() {
       <Stack.Screen name="ChatScreen" component={Chat} options={({route}) => ({
         header(props) {
           return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:"whitesmoke"}}>
             <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <Icon name={"left"} size={30} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
-              <Text style={{marginLeft: 20,fontSize: 30}}>{route.params.roomname}</Text>
+              <Text style={{marginLeft: 20,fontSize: 30, flex:1}} numberOfLines={1} ellipsizeMode='tail'>{route.params.roomname}</Text>
               <Icon name={"adduser"} size={30} style={{marginLeft: "auto", marginRight: 20}} onPress={() => dispatch(setAddParticipant(true))} />
               <Icon name={"setting"} size={30} style={{marginRight: 20}} onPress={() => props.navigation.navigate("RoomInfoScreen",{info: props.route.params})} />
             </View>
