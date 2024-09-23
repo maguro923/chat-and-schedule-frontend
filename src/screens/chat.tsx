@@ -232,7 +232,7 @@ export default function ChatScreen({route}: RootStackScreenProps<'ChatScreen'>) 
 
   return (
     <>
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <GiftedChat
           messages={messages}
           placeholder="メッセージを入力"
@@ -252,7 +252,7 @@ export default function ChatScreen({route}: RootStackScreenProps<'ChatScreen'>) 
           renderAvatarOnTop={true}
           renderSystemMessage={(props) => <CustomSystemMessage {...props} />}
         />
-      </SafeAreaView>
+      </View>
       <Overlay isVisible={addParticipant} overlayStyle={{width: "90%", height: "70%"}}
       onBackdropPress={() => dispatch(setAddParticipant(false))}>
         <AddParticipantScreen id={route.params.roomid} />
