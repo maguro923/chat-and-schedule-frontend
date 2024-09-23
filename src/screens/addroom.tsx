@@ -95,12 +95,12 @@ export default function AddRoomScreen() {
                                 userlist.push(key);
                             }
                         }
-                        console.log("USERLIST",userlist);
-                        console.log(format(new Date(), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'}))
+                        //console.log("USERLIST",userlist);
+                        //console.log(format(new Date(), "yyyy-MM-dd HH:mm:ss.SSSSSSXXX",{timeZone:'Asia/Tokyo'}))
                         const result = await dispatch(sendWebSocketMessage({"type":"CreateRoom","content":{"participants":userlist,"roomname":roomName}}));
                         const response:any = unwrapResult(result);
                         if (response.content.message === "Room created"){
-                            console.log("Room created");
+                            //console.log("Room created");
                             dispatch(addRoomParticipant({id:response.content.id,participants:userlist}));
                             dispatch(addRoomInfo({
                                 "name": roomName,
