@@ -155,7 +155,7 @@ export default function ChatHome() {
       <Stack.Screen name="ChatHomeScreen" component={ChatHomeScreen} options={{
         header(props) {
           return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:"whitesmoke"}}>
             <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <Text style={{fontSize: 30, marginLeft: 20}}>チャット</Text>
               <Icon name={"adduser"} size={30} style={{marginLeft: "auto",marginRight: 20}} onPress={() => dispatch(setAddFriend(true))} />
@@ -182,7 +182,7 @@ export default function ChatHome() {
       <Stack.Screen name="RoomInfoScreen" component={RoomInfoScreen} options={({route}) => ({
         header(props) {
           return (
-            <SafeAreaView>
+            <SafeAreaView style={{backgroundColor:"whitesmoke"}}>
             <View style={{height:50,backgroundColor: 'whitesmoke', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
               <Icon name={"left"} size={30} style={{marginLeft: 20}} onPress={() => props.navigation.goBack()} />
               <Text style={{marginLeft: 20,fontSize: 30,marginRight:"auto"}}>ルーム情報</Text>
