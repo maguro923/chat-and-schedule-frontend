@@ -39,7 +39,7 @@ export default function AddScheduleScreen() {
                       mode="datetime"
                       onConfirm={(date:any) => {
                         setStartDatePickerVisibility(false)
-                        console.log(date)
+                        //console.log(date)
                         setStartAt(date)}}
                       onCancel={() => setStartDatePickerVisibility(false)}
                   />
