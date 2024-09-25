@@ -55,7 +55,7 @@ export default function AddScheduleScreen() {
                       mode="datetime"
                       onConfirm={(date:any) => {
                         setEndDatePickerVisibility(false)
-                        console.log(date)
+                        //console.log(date)
                         setEndAt(date)}}
                       onCancel={() => setEndDatePickerVisibility(false)}
                   />
