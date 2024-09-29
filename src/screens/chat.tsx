@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Actions, Bubble, GiftedChat, IMessage, Send, SystemMessage } from 'react-native-gifted-chat';
 import * as Clipboard from 'expo-clipboard';
 import { RootStackScreenProps } from './chathome';
