@@ -240,14 +240,11 @@ export default function ChatScreen({route}: RootStackScreenProps<'ChatScreen'>) 
           locale="ja"
           renderAvatar={(props) => <CustomAvatar {...props} />}
           renderSend={(props) => <CustomSend {...props} />}
-          //renderActions={(props) => <CustomActions {...props} />}
-          //renderMessageText={(props) => <CustomMessageText {...props} />}
           showAvatarForEveryMessage={true}
           renderBubble={(props) => <CustomMessageBubble {...props} />}
           onLongPress={(context, message) => handleLongPress(context, message)}
           timeFormat='HH:mm'
           dateFormat='YYYY年MM月DD日'
-          //renderDay={(props) => <CustomRenderDay {...props} />}
           renderAvatarOnTop={true}
           renderSystemMessage={(props) => <CustomSystemMessage {...props} />}
         />
